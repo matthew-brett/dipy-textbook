@@ -1,14 +1,16 @@
 # Book settings
 # Learn more at https://jupyterbook.org/customize/config.html
 
-title: Practice and theory of brain imaging
+title: Practice and theory of brain imaging - Dipy edition
 author: The nipraxis team
 logo: images/reggie.png
 # >- starts a multiline string, where newlines replaced by spaces, and final
 # newlines are stripped.
 description: >-
-  Textbook for Practice and Theory of Brain Imaging course.
-  https://nipraxis.org for more information on the course.
+  Dipy flavor of textbook for Practice and
+  Theory of Brain Imaging course.
+  https://dipy.org/workshops/dipy-workshop-2023
+  for more information on the course.
 
 # Force re-execution of notebooks on each build.
 # See https://jupyterbook.org/content/execute.html
@@ -101,17 +103,17 @@ html:
   use_edit_page_button: true
   use_repository_button: true
   use_issues_button: true
-  baseurl: https://textbook.nipraxis.org
+  baseurl: https://matthew-brett.github.io/dipy-textbook
 
 repository:
-  url: https://github.com/nipraxis/textbook
+  url: https://github.com/matthew-brett/dipy-textbook
   branch: main
 
 launch_buttons:
   # The interface interactive links will activate ["classic", "jupyterlab"]
   notebook_interface: "classic"
   # The URL of the JupyterHub (e.g., https://datahub.berkeley.edu)
-  jupyterhub_url: "https://hub.nipraxis.org"
+  jupyterhub_url: "https://dipy.nipraxis.org"
   # The URL of the BinderHub (e.g., https://mybinder.org)
   binderhub_url: "https://mybinder.org"
   # The URL of Google Colab (e.g., https://colab.research.google.com)
