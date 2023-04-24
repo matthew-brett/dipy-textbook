@@ -1,0 +1,1043 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Boolean arrays &#8212; Practice and theory of brain imaging - Dipy edition</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'boolean_arrays';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Two-dimensions, reshaping" href="reshape_and_2d.html" />
+    <link rel="prev" title="Introduction to Numpy" href="numpy_intro.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+  
+
+<a class="navbar-brand logo" href="intro.html">
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/reggie.png" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="_static/reggie.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="intro.html">
+                    Practice and theory of brain imaging
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">The neuroimaging problem</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="the_problem.html">The problem and the plan</a></li>
+
+
+
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">The tools</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="to_code.html">Ode to code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="surviving_computers.html">Surviving the computer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="the_software.html">Our tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="using_jupyter.html">Using Jupyter notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="more_on_jupyter.html">More on the Jupyter notebook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="brisk_python.html">Brisk introduction to Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installing on your computer</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Images and code and images</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="pathlib.html">Using the <code class="docutils literal notranslate"><span class="pre">pathlib</span></code> module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="what_is_an_image.html">What is an image?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="numpy_intro.html">Introduction to Numpy</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Boolean arrays</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reshape_and_2d.html">Two-dimensions, reshaping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="arrays_and_images.html">Arrays as images, images as arrays</a></li>
+<li class="toctree-l1"><a class="reference internal" href="arrays_3d.html">Three-dimensional arrays</a></li>
+<li class="toctree-l1"><a class="reference internal" href="images_3d.html">Three-dimensional images, NIfTI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reshape_and_3d.html">Reshaping and three-dimensional arrays</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boolean_indexing.html">Indexing with Boolean arrays</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boolean_indexing_nd.html">Boolean indexing with more than one dimension</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro_to_4d.html">Working with four dimensional images, masks and functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reshape_and_4d.html">Reshaping, 4D to 2D</a></li>
+<li class="toctree-l1"><a class="reference internal" href="voxels_by_time.html">Voxels and time</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Working reproducibly</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="on_modules.html">Modules and scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sys_path.html">Where does Python look for modules?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="assert.html">Using <code class="docutils literal notranslate"><span class="pre">assert</span></code> for testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="coding_style.html">Python coding style</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docstrings.html">Docstrings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_directories.html">Module directories</a></li>
+<li class="toctree-l1"><a class="reference internal" href="on_testing.html">On testing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Detecting activation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="voxel_time_courses.html">Correlating with voxel time courses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="on_convolution.html">Convolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="convolution_background.html">Convolving with the hemodyamic response function</a></li>
+<li class="toctree-l1"><a class="reference internal" href="on_regression.html">Introducing regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="regress_one_voxel.html">Regression for a single voxel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="regression_notation.html">Notation for regression models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glm_intro.html">Introduction to the general linear model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mean_test_example.html">A worked example of the general linear model</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="model_one_voxel.html">Modeling a single voxel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multi_multiply.html">Estimation for many voxels at the same time</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hypothesis_tests.html">Hypothesis testing with the general linear model</a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="test_one_voxel.html">Testing a single voxel</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="non_tr_onsets.html">Using onsets that do not start on a TR</a></li>
+<li class="toctree-l1"><a class="reference internal" href="whole_image_statistics.html">Whole-brain t tests and p values</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bonferroni_correction.html">Notes on the Bonferroni threshold</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Spatial processing</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="slice_timing.html">Slice timing correction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optimizing_space.html">Calculating transformations between images</a></li>
+<li class="toctree-l1"><a class="reference internal" href="diagonal_zooms.html">Encoding zooms (scaling) with a diagonal matrix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nibabel_affines.html">The <code class="docutils literal notranslate"><span class="pre">nibabel.affines</span></code> module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nibabel_apply_affine.html">Applying coordinate transforms with <code class="docutils literal notranslate"><span class="pre">nibabel.affines.apply_affine</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="map_coordinates.html">General resampling between images with <code class="docutils literal notranslate"><span class="pre">scipy.ndimage.map_coordinates</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="image_header_and_affine.html">The image header and affine</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="images_and_affines.html">Images and affines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rotation_2d_3d.html">Rotations and rotation matrices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="resampling_with_ndimage.html">Resampling with <code class="docutils literal notranslate"><span class="pre">scipy.ndimage</span></code></a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="dipy_registration.html">Registration with dipy</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="anterior_cingulate.html">Anterior cingulate</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Notes on arrays and plots</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="methods_vs_functions.html">Methods vs functions in NumPy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="allclose.html">Testing for near equality with “allclose”</a></li>
+<li class="toctree-l1"><a class="reference internal" href="arange.html">NumPy arange</a></li>
+<li class="toctree-l1"><a class="reference internal" href="numpy_logical.html">Logical operations on Boolean arrays</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dot_outer.html">Vector and matrix dot products, “np.outer”</a></li>
+<li class="toctree-l1"><a class="reference internal" href="newaxis.html">Adding length 1 dimensions with newaxis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="array_reductions.html">Array reduction operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="numpy_random.html">Numpy random number generators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="subtract_means.html">Subtracting the mean from columns or rows</a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="plot_lines.html">Plotting lines in matplotlib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="subplots.html">Subplots and axes in matplotlib</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://mybinder.org/v2/gh/matthew-brett/dipy-textbook/main?urlpath=tree/boolean_arrays.Rmd" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch onBinder"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="_static/images/logo_binder.svg">
+  </span>
+<span class="btn__text-container">Binder</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://dipy.nipraxis.org/hub/user-redirect/git-pull?repo=https%3A//github.com/matthew-brett/dipy-textbook&urlpath=tree/dipy-textbook/boolean_arrays.Rmd&branch=main" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch onJupyterHub"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="_static/images/logo_jupyterhub.svg">
+  </span>
+<span class="btn__text-container">JupyterHub</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/matthew-brett/dipy-textbook/blob/main/boolean_arrays.Rmd" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch onColab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://deepnote.com/launch?url=https%3A%2F%2Fgithub.com%2Fmatthew-brett%2Fdipy-textbook%2Fblob%2Fmain%2Fboolean_arrays.Rmd" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch onDeepnote"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="_static/images/logo_deepnote.svg">
+  </span>
+<span class="btn__text-container">Deepnote</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="initThebeSBT()"
+  class="btn btn-sm btn-launch-thebe dropdown-item"
+  title="Launch Thebe"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-play"></i>
+  </span>
+<span class="btn__text-container">Live Code</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/matthew-brett/dipy-textbook" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/matthew-brett/dipy-textbook/issues/new?title=Issue%20on%20page%20%2Fboolean_arrays.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/boolean_arrays.Rmd" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.Rmd</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script>
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Boolean arrays</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Boolean arrays</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="boolean-arrays">
+<h1>Boolean arrays<a class="headerlink" href="#boolean-arrays" title="Permalink to this heading">#</a></h1>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Remember the problem of the <a class="reference internal" href="numpy_intro.html"><span class="doc std std-doc">onsets and reaction times</span></a>.</p>
+<p>We had the task of calculating the onset times of trials, given a file of trial
+inter-stimulus intervals, and response times.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">nipraxis</span>
+
+<span class="c1"># Fetch the file.</span>
+<span class="n">stim_fname</span> <span class="o">=</span> <span class="n">nipraxis</span><span class="o">.</span><span class="n">fetch_file</span><span class="p">(</span><span class="s1">&#39;24719.f3_beh_CHYM.csv&#39;</span><span class="p">)</span>
+<span class="c1"># Show the filename.</span>
+<span class="n">stim_fname</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Downloading file &#39;24719.f3_beh_CHYM.csv&#39; from &#39;https://raw.githubusercontent.com/nipraxis/nipraxis-data/0.5/24719.f3_beh_CHYM.csv&#39; to &#39;/home/runner/.cache/nipraxis/0.5&#39;.
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;/home/runner/.cache/nipraxis/0.5/24719.f3_beh_CHYM.csv&#39;
+</pre></div>
+</div>
+</div>
+</div>
+<p>We got the data using the Pandas library:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get the Pandas module, rename as &quot;pd&quot;</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="c1"># Read the data file into a data frame.</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">stim_fname</span><span class="p">)</span>
+<span class="c1"># Show the result</span>
+<span class="n">data</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>response</th>
+      <th>response_time</th>
+      <th>trial_ISI</th>
+      <th>trial_shape</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>NaN</td>
+      <td>0</td>
+      <td>2000</td>
+      <td>red_star</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>NaN</td>
+      <td>0</td>
+      <td>1000</td>
+      <td>red_circle</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>NaN</td>
+      <td>0</td>
+      <td>2500</td>
+      <td>green_triangle</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>NaN</td>
+      <td>0</td>
+      <td>1500</td>
+      <td>yellow_square</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>NaN</td>
+      <td>0</td>
+      <td>1500</td>
+      <td>blue_circle</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>315</th>
+      <td>space</td>
+      <td>294</td>
+      <td>1000</td>
+      <td>red_square</td>
+    </tr>
+    <tr>
+      <th>316</th>
+      <td>NaN</td>
+      <td>0</td>
+      <td>2500</td>
+      <td>green_circle</td>
+    </tr>
+    <tr>
+      <th>317</th>
+      <td>NaN</td>
+      <td>0</td>
+      <td>1000</td>
+      <td>green_star</td>
+    </tr>
+    <tr>
+      <th>318</th>
+      <td>space</td>
+      <td>471</td>
+      <td>1000</td>
+      <td>red_circle</td>
+    </tr>
+    <tr>
+      <th>319</th>
+      <td>NaN</td>
+      <td>0</td>
+      <td>1000</td>
+      <td>blue_circle</td>
+    </tr>
+  </tbody>
+</table>
+<p>320 rows × 4 columns</p>
+</div></div></div>
+</div>
+<p>There is one row for each trial.  The columns we are interested in are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">response_time</span></code> — the reaction time for their response (milliseconds after
+the stimulus, 0 if no response)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">trial_ISI</span></code> — the time between the <em>previous</em> stimulus and this one (the
+Interstimulus Interval).  For the first stimulus this is the time from the
+start of the experimental software.</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">response_times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;response_time&#39;</span><span class="p">])</span>
+<span class="n">trial_isis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;trial_ISI&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We then calculated the onset times of each trial relative to the start of the
+scanning run.  The scanning run started 4000 milliseconds before the
+experimental software.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">exp_onsets</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">trial_isis</span><span class="p">)</span>
+<span class="n">scanner_onsets</span> <span class="o">=</span> <span class="n">exp_onsets</span> <span class="o">+</span> <span class="mi">4000</span>
+<span class="n">scanner_onsets</span><span class="p">[:</span><span class="mi">15</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([ 6000,  7000,  9500, 11000, 12500, 14500, 17000, 18500, 20500,
+       21500, 22500, 24000, 25500, 27500, 29000])
+</pre></div>
+</div>
+</div>
+</div>
+<p>We then wanted to calculate the onset times of each response, relative to the
+scanner start.  The response times for each trial are relative to the start of
+the trial, so we can add the response</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Same result from adding the two arrays with the same shape.</span>
+<span class="n">scanner_response_onsets</span> <span class="o">=</span> <span class="n">scanner_onsets</span> <span class="o">+</span> <span class="n">response_times</span>
+<span class="n">scanner_response_onsets</span><span class="p">[:</span><span class="mi">15</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([ 6000,  7000,  9500, 11000, 12500, 14500, 17000, 18500, 20500,
+       21500, 22927, 24000, 25500, 27869, 29000])
+</pre></div>
+</div>
+</div>
+</div>
+<section id="id1">
+<h2>Boolean arrays<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h2>
+<p>As you remember, many of the response time values are 0 indicating no response:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">first_15_rts</span> <span class="o">=</span> <span class="n">response_times</span><span class="p">[:</span><span class="mi">15</span><span class="p">]</span>
+<span class="n">first_15_rts</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([  0,   0,   0,   0,   0,   0,   0,   0,   0,   0, 427,   0,   0,
+       369,   0])
+</pre></div>
+</div>
+</div>
+</div>
+<p>We would like to select the response onsets corresponding to not 0
+<code class="docutils literal notranslate"><span class="pre">response_times</span></code>.</p>
+<p>We can use Boolean arrays to do this.</p>
+<p>This is just a taster of selecting with Boolean arrays.  See <a class="reference internal" href="boolean_indexing.html"><span class="doc std std-doc">Boolean
+indexing</span></a> for more.</p>
+<p>Boolean arrays are arrays that contain values that are one of the two Boolean
+values <code class="docutils literal notranslate"><span class="pre">True</span></code> or <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+<p>Remember <a class="reference internal" href="brisk_python.html#true-and-false"><span class="std std-ref">Boolean values</span></a>, and
+<a class="reference internal" href="brisk_python.html#comparison-operators"><span class="std std-ref">Comparison operators</span></a> from <a class="reference internal" href="brisk_python.html"><span class="doc">Brisk introduction to Python</span></a>.  We can be use comparison
+operators on arrays, to create Boolean arrays.</p>
+<p>Let’s start by looking at the first 15 reaction times:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">first_15_rts</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([  0,   0,   0,   0,   0,   0,   0,   0,   0,   0, 427,   0,   0,
+       369,   0])
+</pre></div>
+</div>
+</div>
+</div>
+<p>Remember that comparisons are operators that give answers to a <em>comparison
+question</em>.  This is how comparisons work on individual values:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">first_15_rts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>False
+</pre></div>
+</div>
+</div>
+</div>
+<p>What do you think will happen if we do the comparison on the whole array, like this?</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">first_15_rts</span> <span class="o">&gt;</span> <span class="mi">0</span>
+</pre></div>
+</div>
+<p>You have seen how Numpy works when adding a single number to an array — it
+takes this to mean that you want to add that number <em>to every element in the
+array</em>.</p>
+<p>Comparisons work the same way:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">first_15_rts_not_zero</span> <span class="o">=</span> <span class="n">first_15_rts</span> <span class="o">&gt;</span> <span class="mi">0</span>
+<span class="n">first_15_rts_not_zero</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([False, False, False, False, False, False, False, False, False,
+       False,  True, False, False,  True, False])
+</pre></div>
+</div>
+</div>
+</div>
+<p>This is the result of asking the comparison question <code class="docutils literal notranslate"><span class="pre">&gt;</span> <span class="pre">0</span></code> of <em>every element in
+the array</em>.</p>
+<p>So the values that end up in the <code class="docutils literal notranslate"><span class="pre">first_15_rts_not_zero</span></code> array come from these
+comparisons:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Position 0:&#39;</span><span class="p">,</span> <span class="n">first_15_rts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Position 1:&#39;</span><span class="p">,</span> <span class="n">first_15_rts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39; ... and so on, up to ...&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Position 13:&#39;</span><span class="p">,</span> <span class="n">first_15_rts</span><span class="p">[</span><span class="mi">13</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Position 14:&#39;</span><span class="p">,</span> <span class="n">first_15_rts</span><span class="p">[</span><span class="mi">14</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Position 0: False
+Position 1: False
+ ... and so on, up to ...
+Position 13: True
+Position 14: False
+</pre></div>
+</div>
+</div>
+</div>
+<p>Here is the equivalent array for all the reaction times:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rts_not_zero</span> <span class="o">=</span> <span class="n">response_times</span> <span class="o">&gt;</span> <span class="mi">0</span>
+<span class="c1"># Show the first 50 values.</span>
+<span class="n">rts_not_zero</span><span class="p">[:</span><span class="mi">50</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([False, False, False, False, False, False, False, False, False,
+       False,  True, False, False,  True, False,  True, False,  True,
+       False, False, False, False, False,  True,  True,  True, False,
+       False, False,  True, False,  True, False, False, False, False,
+       False, False,  True, False, False, False, False,  True,  True,
+        True, False, False,  True, False])
+</pre></div>
+</div>
+</div>
+</div>
+<p>We will <a class="reference internal" href="boolean_indexing.html"><span class="doc std std-doc">soon see</span></a> that we can use these arrays to select
+elements from other arrays.</p>
+<p>Specifically, if we put a Boolean array like <code class="docutils literal notranslate"><span class="pre">rts_not_zero</span></code> between square
+brackets for another array, that will have the effect of selecting the elements
+at positions where <code class="docutils literal notranslate"><span class="pre">rts_not_zero</span></code> has True, and throwing away elements where
+<code class="docutils literal notranslate"><span class="pre">rts_not_zero</span></code> has False.</p>
+<p>For example, rushing ahead, we can select the values in <code class="docutils literal notranslate"><span class="pre">rt_arr</span></code> corresponding
+to reaction times greater than zero with:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">response_times</span><span class="p">[</span><span class="n">rts_not_zero</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([427, 369, 337, 308, 375, 478, 300, 321, 306, 370, 372, 372, 342,
+       382, 318, 371, 450, 442, 452, 381, 351, 394, 353, 380, 387, 341,
+       366, 432, 415, 406, 466, 364, 462, 477, 374, 384, 375, 432, 369,
+       354, 455, 338, 364, 376, 345, 299, 308, 381, 375, 438, 325, 371,
+       377, 314, 297, 349, 607, 391, 334, 385, 386, 369, 394, 361, 480,
+       375, 368, 325, 410, 328, 412, 379, 383, 376, 351, 361, 403, 411,
+       447, 590, 328, 376, 410, 433, 370, 353, 353, 386, 417, 315, 298,
+       370, 365, 439, 391, 351, 464, 357, 328, 294, 471])
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "matthew-brett/dipy-textbook",
+            ref: "main",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+                <footer class="bd-footer-article">
+                  
+<div class="footer-article-items footer-article__inner">
+  
+    <div class="footer-article-item"><!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="numpy_intro.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Introduction to Numpy</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="reshape_and_2d.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Two-dimensions, reshaping</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div></div>
+  
+</div>
+
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Boolean arrays</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By The nipraxis team
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

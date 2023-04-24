@@ -1,0 +1,1012 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Correlating with voxel time courses &#8212; Practice and theory of brain imaging - Dipy edition</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'voxel_time_courses';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Convolution" href="on_convolution.html" />
+    <link rel="prev" title="On testing" href="on_testing.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+  
+
+<a class="navbar-brand logo" href="intro.html">
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/reggie.png" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="_static/reggie.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="intro.html">
+                    Practice and theory of brain imaging
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">The neuroimaging problem</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="the_problem.html">The problem and the plan</a></li>
+
+
+
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">The tools</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="to_code.html">Ode to code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="surviving_computers.html">Surviving the computer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="the_software.html">Our tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="using_jupyter.html">Using Jupyter notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="more_on_jupyter.html">More on the Jupyter notebook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="brisk_python.html">Brisk introduction to Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installing on your computer</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Images and code and images</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="pathlib.html">Using the <code class="docutils literal notranslate"><span class="pre">pathlib</span></code> module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="what_is_an_image.html">What is an image?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="numpy_intro.html">Introduction to Numpy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boolean_arrays.html">Boolean arrays</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reshape_and_2d.html">Two-dimensions, reshaping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="arrays_and_images.html">Arrays as images, images as arrays</a></li>
+<li class="toctree-l1"><a class="reference internal" href="arrays_3d.html">Three-dimensional arrays</a></li>
+<li class="toctree-l1"><a class="reference internal" href="images_3d.html">Three-dimensional images, NIfTI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reshape_and_3d.html">Reshaping and three-dimensional arrays</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boolean_indexing.html">Indexing with Boolean arrays</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boolean_indexing_nd.html">Boolean indexing with more than one dimension</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro_to_4d.html">Working with four dimensional images, masks and functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reshape_and_4d.html">Reshaping, 4D to 2D</a></li>
+<li class="toctree-l1"><a class="reference internal" href="voxels_by_time.html">Voxels and time</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Working reproducibly</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="on_modules.html">Modules and scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sys_path.html">Where does Python look for modules?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="assert.html">Using <code class="docutils literal notranslate"><span class="pre">assert</span></code> for testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="coding_style.html">Python coding style</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docstrings.html">Docstrings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_directories.html">Module directories</a></li>
+<li class="toctree-l1"><a class="reference internal" href="on_testing.html">On testing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Detecting activation</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Correlating with voxel time courses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="on_convolution.html">Convolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="convolution_background.html">Convolving with the hemodyamic response function</a></li>
+<li class="toctree-l1"><a class="reference internal" href="on_regression.html">Introducing regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="regress_one_voxel.html">Regression for a single voxel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="regression_notation.html">Notation for regression models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glm_intro.html">Introduction to the general linear model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mean_test_example.html">A worked example of the general linear model</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="model_one_voxel.html">Modeling a single voxel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multi_multiply.html">Estimation for many voxels at the same time</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hypothesis_tests.html">Hypothesis testing with the general linear model</a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="test_one_voxel.html">Testing a single voxel</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="non_tr_onsets.html">Using onsets that do not start on a TR</a></li>
+<li class="toctree-l1"><a class="reference internal" href="whole_image_statistics.html">Whole-brain t tests and p values</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bonferroni_correction.html">Notes on the Bonferroni threshold</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Spatial processing</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="slice_timing.html">Slice timing correction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optimizing_space.html">Calculating transformations between images</a></li>
+<li class="toctree-l1"><a class="reference internal" href="diagonal_zooms.html">Encoding zooms (scaling) with a diagonal matrix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nibabel_affines.html">The <code class="docutils literal notranslate"><span class="pre">nibabel.affines</span></code> module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nibabel_apply_affine.html">Applying coordinate transforms with <code class="docutils literal notranslate"><span class="pre">nibabel.affines.apply_affine</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="map_coordinates.html">General resampling between images with <code class="docutils literal notranslate"><span class="pre">scipy.ndimage.map_coordinates</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="image_header_and_affine.html">The image header and affine</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="images_and_affines.html">Images and affines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rotation_2d_3d.html">Rotations and rotation matrices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="resampling_with_ndimage.html">Resampling with <code class="docutils literal notranslate"><span class="pre">scipy.ndimage</span></code></a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="dipy_registration.html">Registration with dipy</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="anterior_cingulate.html">Anterior cingulate</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Notes on arrays and plots</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="methods_vs_functions.html">Methods vs functions in NumPy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="allclose.html">Testing for near equality with “allclose”</a></li>
+<li class="toctree-l1"><a class="reference internal" href="arange.html">NumPy arange</a></li>
+<li class="toctree-l1"><a class="reference internal" href="numpy_logical.html">Logical operations on Boolean arrays</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dot_outer.html">Vector and matrix dot products, “np.outer”</a></li>
+<li class="toctree-l1"><a class="reference internal" href="newaxis.html">Adding length 1 dimensions with newaxis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="array_reductions.html">Array reduction operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="numpy_random.html">Numpy random number generators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="subtract_means.html">Subtracting the mean from columns or rows</a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="plot_lines.html">Plotting lines in matplotlib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="subplots.html">Subplots and axes in matplotlib</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://mybinder.org/v2/gh/matthew-brett/dipy-textbook/main?urlpath=tree/voxel_time_courses.Rmd" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch onBinder"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="_static/images/logo_binder.svg">
+  </span>
+<span class="btn__text-container">Binder</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://dipy.nipraxis.org/hub/user-redirect/git-pull?repo=https%3A//github.com/matthew-brett/dipy-textbook&urlpath=tree/dipy-textbook/voxel_time_courses.Rmd&branch=main" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch onJupyterHub"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="_static/images/logo_jupyterhub.svg">
+  </span>
+<span class="btn__text-container">JupyterHub</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/matthew-brett/dipy-textbook/blob/main/voxel_time_courses.Rmd" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch onColab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://deepnote.com/launch?url=https%3A%2F%2Fgithub.com%2Fmatthew-brett%2Fdipy-textbook%2Fblob%2Fmain%2Fvoxel_time_courses.Rmd" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch onDeepnote"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="_static/images/logo_deepnote.svg">
+  </span>
+<span class="btn__text-container">Deepnote</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="initThebeSBT()"
+  class="btn btn-sm btn-launch-thebe dropdown-item"
+  title="Launch Thebe"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-play"></i>
+  </span>
+<span class="btn__text-container">Live Code</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/matthew-brett/dipy-textbook" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/matthew-brett/dipy-textbook/issues/new?title=Issue%20on%20page%20%2Fvoxel_time_courses.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/voxel_time_courses.Rmd" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.Rmd</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script>
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Correlating with voxel time courses</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-reminder-on-correlation">A reminder on correlation</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="correlating-with-voxel-time-courses">
+<h1>Correlating with voxel time courses<a class="headerlink" href="#correlating-with-voxel-time-courses" title="Permalink to this heading">#</a></h1>
+<p>When we have a 4D image, we can think of the data in several ways.  For
+example the data could be:</p>
+<ul class="simple">
+<li><p>A series of 3D volumes (slicing over the last axis);</p></li>
+<li><p>A collection of 1D voxel time courses (slicing over the first three axes).</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Our usual set-up</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="c1"># Display array values to 4 digits of precision</span>
+<span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">suppress</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load the function to fetch the data file we need.</span>
+<span class="kn">import</span> <span class="nn">nipraxis</span>
+<span class="c1"># Fetch the data file.</span>
+<span class="n">data_fname</span> <span class="o">=</span> <span class="n">nipraxis</span><span class="o">.</span><span class="n">fetch_file</span><span class="p">(</span><span class="s1">&#39;ds114_sub009_t2r1.nii&#39;</span><span class="p">)</span>
+<span class="c1"># Show the file name of the fetched data.</span>
+<span class="n">data_fname</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;/home/runner/.cache/nipraxis/0.5/ds114_sub009_t2r1.nii&#39;
+</pre></div>
+</div>
+</div>
+</div>
+<p>We load a 4D file:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">nibabel</span> <span class="k">as</span> <span class="nn">nib</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">nib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">data_fname</span><span class="p">)</span>
+<span class="n">img</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(64, 64, 30, 173)
+</pre></div>
+</div>
+</div>
+</div>
+<p>We drop the first volume; as you remember, the first volume is very different
+from the rest of the volumes in the series:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Drop the first volume</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">get_fdata</span><span class="p">()</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">1</span><span class="p">:]</span>
+<span class="n">data</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(64, 64, 30, 172)
+</pre></div>
+</div>
+</div>
+</div>
+<p>As you have seen in <a class="reference internal" href="intro_to_4d.html"><span class="doc std std-doc">the 4D introduction</span></a>, we can think of
+this 4D data as a series of 3D volumes.  That is the way we have been thinking
+of the 4D data so far:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># This is slicing over the last (time) axis</span>
+<span class="n">vol0</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="n">vol0</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(64, 64, 30)
+</pre></div>
+</div>
+</div>
+</div>
+<p>In that page, we found a 3D <em>coordinate</em> for an interesting voxel. The 3D coordinate is just the indices in the first three dimensions — the dimensions representing space.  We can write the coordinate as indices in a tuple like
+this: <code class="docutils literal notranslate"><span class="pre">(42,</span> <span class="pre">32,</span> <span class="pre">19)</span></code>.  As you saw in the 4D page, the first index of 42 refers
+to a position towards the left of the brain (&gt; 31).  The second index of 32
+refers to a position almost in the center front to back.  The last index of 19
+refers to a position a little further towards the top of the brain – in this
+image.</p>
+<p>Here is the position of that coordinate displayed on a plane of the 3D volume (in fact, the mean volume).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Where is this in the brain?</span>
+<span class="n">mean_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+<span class="c1"># Make a nice bright dot in the right place</span>
+<span class="n">mean_data</span><span class="p">[</span><span class="mi">42</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">19</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">mean_data</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">mean_data</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">19</span><span class="p">],</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.image.AxesImage at 0x7f6890d74fd0&gt;
+</pre></div>
+</div>
+<img alt="_images/251bff411d604ebfd6c29d789bf0b18cfbcaeb67554f5acd754367506b1b47d6.png" src="_images/251bff411d604ebfd6c29d789bf0b18cfbcaeb67554f5acd754367506b1b47d6.png" />
+</div>
+</div>
+<p>If I slice into the data array with these coordinates, I will get a vector,
+with the image value at that position (43, 32, 19), for every point in time:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># This is slicing over all three of the space axes</span>
+<span class="n">voxel_time_course</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">42</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">19</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">voxel_time_course</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">voxel_time_course</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(172,)
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x7f6890ab9060&gt;]
+</pre></div>
+</div>
+<img alt="_images/505ec79b303835b5fc80ef4827554d16714f0df5261311ed3722ee68268d6a2a.png" src="_images/505ec79b303835b5fc80ef4827554d16714f0df5261311ed3722ee68268d6a2a.png" />
+</div>
+</div>
+<p>This is a “voxel time course”.</p>
+<p>We might want to do ordinary statistical type things with this time course. For
+example, we might want to correlate this time course with a measure of whether
+the subject was doing the task or not.</p>
+<p>This measure will have 1 for each volume (time point) where the subject was
+doing the task, and 0 for each volume where the subject was at rest.</p>
+<p>We call this a “neural” time course, because we believe that the nerves in the
+relevant brain area will switch on when the task starts (value = 1) and then
+switch off when the task stops (value = 0).</p>
+<p>To get this on-off measure, we will use our pre-packaged function for OpenFMRI
+data:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Fetch the condition file</span>
+<span class="kn">import</span> <span class="nn">nipraxis</span>
+
+<span class="n">cond_fname</span> <span class="o">=</span> <span class="n">nipraxis</span><span class="o">.</span><span class="n">fetch_file</span><span class="p">(</span><span class="s1">&#39;ds114_sub009_t2r1_cond.txt&#39;</span><span class="p">)</span>
+<span class="n">cond_fname</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&#39;/home/runner/.cache/nipraxis/0.5/ds114_sub009_t2r1_cond.txt&#39;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load the neural time course using pre-packaged function</span>
+<span class="kn">from</span> <span class="nn">nipraxis.stimuli</span> <span class="kn">import</span> <span class="n">events2neural</span>
+<span class="n">TR</span> <span class="o">=</span> <span class="mf">2.5</span>  <span class="c1"># time between volumes</span>
+<span class="n">n_trs</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># The original number of TRs</span>
+<span class="n">neural</span> <span class="o">=</span> <span class="n">events2neural</span><span class="p">(</span><span class="n">cond_fname</span><span class="p">,</span> <span class="n">TR</span><span class="p">,</span> <span class="n">n_trs</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">neural</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x7f6890b37c10&gt;]
+</pre></div>
+</div>
+<img alt="_images/966d2e0ed71d077cf72620d2156b503c12f1a440692b7a5f2f75982f18944c63.png" src="_images/966d2e0ed71d077cf72620d2156b503c12f1a440692b7a5f2f75982f18944c63.png" />
+</div>
+</div>
+<p>Here we plot the voxel time course against this neural prediction:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot the neural prediction against the data</span>
+<span class="n">neural</span> <span class="o">=</span> <span class="n">neural</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+<span class="c1"># Notice the &#39;o&#39; to specify the &quot;line marker&quot;</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">neural</span><span class="p">,</span> <span class="n">voxel_time_course</span><span class="p">,</span> <span class="s1">&#39;o&#39;</span><span class="p">)</span>
+<span class="c1"># Set the axis limits to give space on left and right</span>
+<span class="n">axis</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+<span class="n">axis</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(-0.1, 1.1)
+</pre></div>
+</div>
+<img alt="_images/2455aac7c8e8acc6abdf0264276d5058dac53ad756eac7b0951dd8674b5fe637.png" src="_images/2455aac7c8e8acc6abdf0264276d5058dac53ad756eac7b0951dd8674b5fe637.png" />
+</div>
+</div>
+<p>We can look at the correlation between the on-off prediction and the voxel
+time course:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Correlate the neural time course with the voxel time course</span>
+<span class="n">corr_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">corrcoef</span><span class="p">(</span><span class="n">neural</span><span class="p">,</span> <span class="n">voxel_time_course</span><span class="p">)</span>
+<span class="n">corr_array</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[1.    , 0.5429],
+       [0.5429, 1.    ]])
+</pre></div>
+</div>
+</div>
+</div>
+<p>Notice that Numpy has correlated <code class="docutils literal notranslate"><span class="pre">neural</span></code> with <code class="docutils literal notranslate"><span class="pre">neural</span></code> — to give 1 — and <code class="docutils literal notranslate"><span class="pre">voxel_time_course</span></code>, to give:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Correlation of neural (row 0) with voxel_time_course (column 1)</span>
+<span class="n">correlation</span> <span class="o">=</span> <span class="n">corr_array</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="n">correlation</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.5428503395516837
+</pre></div>
+</div>
+</div>
+</div>
+<p>In the same way it has correlated <code class="docutils literal notranslate"><span class="pre">voxel_time_course</span></code> with <code class="docutils literal notranslate"><span class="pre">neural</span></code> and <code class="docutils literal notranslate"><span class="pre">voxel_time_course</span></code>, to give a 2 by 2 array.</p>
+<section id="a-reminder-on-correlation">
+<span id="on-correlation"></span><h2>A reminder on correlation<a class="headerlink" href="#a-reminder-on-correlation" title="Permalink to this heading">#</a></h2>
+<p>We are sure that correlation is familiar to you, but here we define it, as a reminder.</p>
+<blockquote>
+<div><p>Correlation between two 1D arrays is the result of converting each array to
+z-scores, element-wise multiplying the z-score arrays, and taking the mean of
+the result.</p>
+</div></blockquote>
+<p>Turning an array into a z-score (AKA <a class="reference external" href="https://en.wikipedia.org/wiki/Standard_score">standard
+score</a>) is the operation of:</p>
+<ul class="simple">
+<li><p>Subtracting the mean of the array then</p></li>
+<li><p>Dividing by the standard deviation.</p></li>
+</ul>
+<p>Let’s do that for the two arrays above:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># z-scores for voxel_time_course.</span>
+<span class="n">vtc_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">voxel_time_course</span><span class="p">)</span>
+<span class="n">vtc_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">voxel_time_course</span><span class="p">)</span>
+<span class="n">vtc_z_scores</span> <span class="o">=</span> <span class="p">(</span><span class="n">voxel_time_course</span> <span class="o">-</span> <span class="n">vtc_mean</span><span class="p">)</span> <span class="o">/</span> <span class="n">vtc_std</span>
+<span class="c1"># Show the first 10 values.</span>
+<span class="n">vtc_z_scores</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([-0.0652, -0.0194, -0.1109, -1.163 ,  0.4837,  1.6273,  1.673 ,
+        0.621 ,  0.4837,  0.621 ])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># z-scores for neural time course</span>
+<span class="n">neural_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">neural</span><span class="p">)</span>
+<span class="n">neural_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">neural</span><span class="p">)</span>
+<span class="n">neural_z_scores</span> <span class="o">=</span> <span class="p">(</span><span class="n">neural</span> <span class="o">-</span> <span class="n">neural_mean</span><span class="p">)</span> <span class="o">/</span> <span class="n">neural_std</span>
+<span class="n">neural_z_scores</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([-0.977 , -0.977 , -0.977 ,  1.0235,  1.0235,  1.0235,  1.0235,
+        1.0235,  1.0235,  1.0235])
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now we multiply them together, using the usual element by element Numpy multiplication rules for arrays:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">multiplied</span> <span class="o">=</span> <span class="n">vtc_z_scores</span> <span class="o">*</span> <span class="n">neural_z_scores</span>
+<span class="n">multiplied</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([ 0.0637,  0.019 ,  0.1083, -1.1903,  0.4951,  1.6656,  1.7124,
+        0.6356,  0.4951,  0.6356])
+</pre></div>
+</div>
+</div>
+</div>
+<p>To calculate the correlation, we take the mean:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">correlation_again</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">multiplied</span><span class="p">)</span>
+<span class="n">correlation_again</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.5428503395516836
+</pre></div>
+</div>
+</div>
+</div>
+<p>This recalculation is very very close to the original.  The difference is so
+tiny we can put it down to <a class="reference external" href="https://matthew-brett.github.io/teaching/floating_error.html">floating point
+error</a>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">correlation</span><span class="p">,</span> <span class="n">correlation_again</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>True
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "matthew-brett/dipy-textbook",
+            ref: "main",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+                <footer class="bd-footer-article">
+                  
+<div class="footer-article-items footer-article__inner">
+  
+    <div class="footer-article-item"><!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="on_testing.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">On testing</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="on_convolution.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Convolution</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div></div>
+  
+</div>
+
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-reminder-on-correlation">A reminder on correlation</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By The nipraxis team
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

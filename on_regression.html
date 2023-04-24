@@ -1,0 +1,1713 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Introducing regression &#8212; Practice and theory of brain imaging - Dipy edition</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'on_regression';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Regression for a single voxel" href="regress_one_voxel.html" />
+    <link rel="prev" title="Convolving with the hemodyamic response function" href="convolution_background.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+  
+
+<a class="navbar-brand logo" href="intro.html">
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/reggie.png" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="_static/reggie.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="intro.html">
+                    Practice and theory of brain imaging
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">The neuroimaging problem</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="the_problem.html">The problem and the plan</a></li>
+
+
+
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">The tools</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="to_code.html">Ode to code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="surviving_computers.html">Surviving the computer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="the_software.html">Our tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="using_jupyter.html">Using Jupyter notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="more_on_jupyter.html">More on the Jupyter notebook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="brisk_python.html">Brisk introduction to Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installing on your computer</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Images and code and images</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="pathlib.html">Using the <code class="docutils literal notranslate"><span class="pre">pathlib</span></code> module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="what_is_an_image.html">What is an image?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="numpy_intro.html">Introduction to Numpy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boolean_arrays.html">Boolean arrays</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reshape_and_2d.html">Two-dimensions, reshaping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="arrays_and_images.html">Arrays as images, images as arrays</a></li>
+<li class="toctree-l1"><a class="reference internal" href="arrays_3d.html">Three-dimensional arrays</a></li>
+<li class="toctree-l1"><a class="reference internal" href="images_3d.html">Three-dimensional images, NIfTI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reshape_and_3d.html">Reshaping and three-dimensional arrays</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boolean_indexing.html">Indexing with Boolean arrays</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boolean_indexing_nd.html">Boolean indexing with more than one dimension</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro_to_4d.html">Working with four dimensional images, masks and functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reshape_and_4d.html">Reshaping, 4D to 2D</a></li>
+<li class="toctree-l1"><a class="reference internal" href="voxels_by_time.html">Voxels and time</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Working reproducibly</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="on_modules.html">Modules and scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sys_path.html">Where does Python look for modules?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="assert.html">Using <code class="docutils literal notranslate"><span class="pre">assert</span></code> for testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="coding_style.html">Python coding style</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docstrings.html">Docstrings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_directories.html">Module directories</a></li>
+<li class="toctree-l1"><a class="reference internal" href="on_testing.html">On testing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Detecting activation</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="voxel_time_courses.html">Correlating with voxel time courses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="on_convolution.html">Convolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="convolution_background.html">Convolving with the hemodyamic response function</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Introducing regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="regress_one_voxel.html">Regression for a single voxel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="regression_notation.html">Notation for regression models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glm_intro.html">Introduction to the general linear model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mean_test_example.html">A worked example of the general linear model</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="model_one_voxel.html">Modeling a single voxel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multi_multiply.html">Estimation for many voxels at the same time</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hypothesis_tests.html">Hypothesis testing with the general linear model</a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="test_one_voxel.html">Testing a single voxel</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="non_tr_onsets.html">Using onsets that do not start on a TR</a></li>
+<li class="toctree-l1"><a class="reference internal" href="whole_image_statistics.html">Whole-brain t tests and p values</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bonferroni_correction.html">Notes on the Bonferroni threshold</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Spatial processing</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="slice_timing.html">Slice timing correction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optimizing_space.html">Calculating transformations between images</a></li>
+<li class="toctree-l1"><a class="reference internal" href="diagonal_zooms.html">Encoding zooms (scaling) with a diagonal matrix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nibabel_affines.html">The <code class="docutils literal notranslate"><span class="pre">nibabel.affines</span></code> module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nibabel_apply_affine.html">Applying coordinate transforms with <code class="docutils literal notranslate"><span class="pre">nibabel.affines.apply_affine</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="map_coordinates.html">General resampling between images with <code class="docutils literal notranslate"><span class="pre">scipy.ndimage.map_coordinates</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="image_header_and_affine.html">The image header and affine</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="images_and_affines.html">Images and affines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rotation_2d_3d.html">Rotations and rotation matrices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="resampling_with_ndimage.html">Resampling with <code class="docutils literal notranslate"><span class="pre">scipy.ndimage</span></code></a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="dipy_registration.html">Registration with dipy</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="anterior_cingulate.html">Anterior cingulate</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Notes on arrays and plots</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="methods_vs_functions.html">Methods vs functions in NumPy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="allclose.html">Testing for near equality with “allclose”</a></li>
+<li class="toctree-l1"><a class="reference internal" href="arange.html">NumPy arange</a></li>
+<li class="toctree-l1"><a class="reference internal" href="numpy_logical.html">Logical operations on Boolean arrays</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dot_outer.html">Vector and matrix dot products, “np.outer”</a></li>
+<li class="toctree-l1"><a class="reference internal" href="newaxis.html">Adding length 1 dimensions with newaxis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="array_reductions.html">Array reduction operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="numpy_random.html">Numpy random number generators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="subtract_means.html">Subtracting the mean from columns or rows</a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="plot_lines.html">Plotting lines in matplotlib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="subplots.html">Subplots and axes in matplotlib</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://mybinder.org/v2/gh/matthew-brett/dipy-textbook/main?urlpath=tree/on_regression.Rmd" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch onBinder"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="_static/images/logo_binder.svg">
+  </span>
+<span class="btn__text-container">Binder</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://dipy.nipraxis.org/hub/user-redirect/git-pull?repo=https%3A//github.com/matthew-brett/dipy-textbook&urlpath=tree/dipy-textbook/on_regression.Rmd&branch=main" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch onJupyterHub"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="_static/images/logo_jupyterhub.svg">
+  </span>
+<span class="btn__text-container">JupyterHub</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/matthew-brett/dipy-textbook/blob/main/on_regression.Rmd" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch onColab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://deepnote.com/launch?url=https%3A%2F%2Fgithub.com%2Fmatthew-brett%2Fdipy-textbook%2Fblob%2Fmain%2Fon_regression.Rmd" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch onDeepnote"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="_static/images/logo_deepnote.svg">
+  </span>
+<span class="btn__text-container">Deepnote</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="initThebeSBT()"
+  class="btn btn-sm btn-launch-thebe dropdown-item"
+  title="Launch Thebe"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-play"></i>
+  </span>
+<span class="btn__text-container">Live Code</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/matthew-brett/dipy-textbook" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/matthew-brett/dipy-textbook/issues/new?title=Issue%20on%20page%20%2Fon_regression.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/on_regression.Rmd" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.Rmd</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script>
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Introducing regression</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-example-regression-problem">The example regression problem</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simple-linear-regression">Simple linear regression</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-good-guess">A good guess</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-bad-measure">A bad measure</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-better-measure">A better measure</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#intercept-slope-intercept">Intercept?  Slope?  Intercept?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#to-z-scores">To z-scores</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#best-fit-line-for-the-original-data">Best fit line for the original data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#automating-the-best-slope-calculation-with-scipy">Automating the best-slope calculation with Scipy</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="introducing-regression">
+<h1>Introducing regression<a class="headerlink" href="#introducing-regression" title="Permalink to this heading">#</a></h1>
+<p>These are some notes to introduce simple regression.</p>
+<section id="the-example-regression-problem">
+<h2>The example regression problem<a class="headerlink" href="#the-example-regression-problem" title="Permalink to this heading">#</a></h2>
+<p><a class="reference internal" href="voxels_by_time.html"><span class="doc std std-doc">So far</span></a> we have been looking at the relationship between a
+neural predictor and a voxel time course.  We have thus far used <em>correlation</em>
+to look for a relationship.</p>
+<p>To make things simpler, for illustration, lets look the relationship between
+two short example arrays.  We will get back to the voxel and predictor problem
+later.</p>
+<p>Let’s imagine that we have measured scores for a “psychopathy” personality
+trait in 12 students. We also have some other information about these students.
+For example, we measured how much sweat each student had on their palms, and we
+call this a “clammy” score. We first try and work out whether the “clammy”
+score predicts the “psychopathy” score. We’ll do this with simple linear
+regression.</p>
+</section>
+<section id="simple-linear-regression">
+<h2>Simple linear regression<a class="headerlink" href="#simple-linear-regression" title="Permalink to this heading">#</a></h2>
+<p>We first need to get our environment set up to run the code and plots we
+need.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Import numerical and plotting libraries</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">numpy.linalg</span> <span class="k">as</span> <span class="nn">npl</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="c1"># Only show 6 decimals when printing</span>
+<span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Here are our scores of “psychopathy” from the 12 students:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">psychopathy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">11.416</span><span class="p">,</span> <span class="mf">4.514</span><span class="p">,</span> <span class="mf">12.204</span><span class="p">,</span> <span class="mf">14.835</span><span class="p">,</span>
+                        <span class="mf">8.416</span><span class="p">,</span>  <span class="mf">6.563</span><span class="p">,</span> <span class="mf">17.343</span><span class="p">,</span> <span class="mf">13.02</span><span class="p">,</span>
+                        <span class="mf">15.19</span><span class="p">,</span> <span class="mf">11.902</span><span class="p">,</span> <span class="mf">22.721</span><span class="p">,</span> <span class="mf">22.324</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>These are the skin-conductance scores to get a measure of clamminess for
+the handshakes of each student:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">clammy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.389</span><span class="p">,</span>  <span class="mf">0.2</span><span class="p">,</span>    <span class="mf">0.241</span><span class="p">,</span>  <span class="mf">0.463</span><span class="p">,</span>
+                   <span class="mf">4.585</span><span class="p">,</span>  <span class="mf">1.097</span><span class="p">,</span>  <span class="mf">1.642</span><span class="p">,</span>  <span class="mf">4.972</span><span class="p">,</span>
+                   <span class="mf">7.957</span><span class="p">,</span>  <span class="mf">5.585</span><span class="p">,</span>  <span class="mf">5.527</span><span class="p">,</span>  <span class="mf">6.964</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>We have <code class="docutils literal notranslate"><span class="pre">n</span></code> values, where the value of <code class="docutils literal notranslate"><span class="pre">n</span></code> is:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">clammy</span><span class="p">)</span>
+<span class="n">n</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>12
+</pre></div>
+</div>
+</div>
+</div>
+<p>We happen to believe that there is some relationship between <code class="docutils literal notranslate"><span class="pre">clammy</span></code>
+and <code class="docutils literal notranslate"><span class="pre">psychopathy</span></code>. Plotting them together we get:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">clammy</span><span class="p">,</span> <span class="n">psychopathy</span><span class="p">,</span> <span class="s1">&#39;+&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Clamminess of handshake&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Psychopathy score&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0, 0.5, &#39;Psychopathy score&#39;)
+</pre></div>
+</div>
+<img alt="_images/6218169159ce986412a31bf2054cb11cfb933241bfdc317314948d292a8e634f.png" src="_images/6218169159ce986412a31bf2054cb11cfb933241bfdc317314948d292a8e634f.png" />
+</div>
+</div>
+<p>It looks like there may be some sort of straight line relationship.  We can
+define any line by specifying the:</p>
+<ul class="simple">
+<li><p>Intercept and the</p></li>
+<li><p>Slope</p></li>
+</ul>
+<p>The intercept is the y-axis value where the line crosses the y-axis.  Put
+another way, it is the value for y when x==0.</p>
+<p>Let’s give <code class="docutils literal notranslate"><span class="pre">clammy</span></code> the name <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">psychopathy</span></code> the name <code class="docutils literal notranslate"><span class="pre">y</span></code>, to match the terminology.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">clammy</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">psychopathy</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>What does our straight line relationship mean?</p>
+<p>We are saying that the values of <code class="docutils literal notranslate"><span class="pre">y</span></code> (<code class="docutils literal notranslate"><span class="pre">psychopathy</span></code>) can be partly predicted by
+a straight line of formula <code class="docutils literal notranslate"><span class="pre">0.9</span> <span class="pre">*</span> <span class="pre">x</span> <span class="pre">+</span> <span class="pre">10</span></code> (remember, <code class="docutils literal notranslate"><span class="pre">x</span></code> is <code class="docutils literal notranslate"><span class="pre">clammy</span></code>).</p>
+<p>The slope is change in the number of units in y, for every one unit change in
+x.  We can check this anywhere on the line, but one easy way to get the slope
+is to subtract the y value at x == 0 from the y value at x == 1.  This is, by
+definition, the number of units increase in y, for a one unit increase in x.</p>
+<p>We could try guessing at a line to fit the data. Let’s try an intercept of <span class="math notranslate nohighlight">\(10\)</span>
+and slope <span class="math notranslate nohighlight">\(0.9\)</span>.</p>
+<p>The line gives a <em>predicted y value</em> for every x value, like this:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">guessed_inter</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">guessed_slope</span> <span class="o">=</span> <span class="mf">0.9</span>
+<span class="n">predicted_y</span> <span class="o">=</span> <span class="n">guessed_inter</span> <span class="o">+</span> <span class="n">guessed_slope</span> <span class="o">*</span> <span class="n">x</span>
+<span class="n">predicted_y</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([10.3501, 10.18  , 10.2169, 10.4167, 14.1265, 10.9873, 11.4778,
+       14.4748, 17.1613, 15.0265, 14.9743, 16.2676])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot the data</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Actual values&#39;</span><span class="p">)</span>
+<span class="c1"># Plot the predicted values</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">predicted_y</span><span class="p">,</span> <span class="s1">&#39;ro&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Values predicted from line&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Clamminess of handshake&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Psychopathy score&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Clammy vs psychopathy with guessed values from line&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7fd86f30f100&gt;
+</pre></div>
+</div>
+<img alt="_images/f7f968c91c084469046bfcf35818ff9896814483df8911f79aaa3be5be4b6201.png" src="_images/f7f968c91c084469046bfcf35818ff9896814483df8911f79aaa3be5be4b6201.png" />
+</div>
+</div>
+<p>That’s the guess for the line, but is it a good guess?</p>
+<p>How would we decide?</p>
+</section>
+<section id="a-good-guess">
+<h2>A good guess<a class="headerlink" href="#a-good-guess" title="Permalink to this heading">#</a></h2>
+<p>Our job is to look for a number to evaluate the line, compared to other lines.
+We want a number that is <em>low</em> when the line is good, and <em>high</em> when the line
+is bad.</p>
+<p>If the line is good, then it makes good <em>predictions</em>.  A good prediction is
+close to the value is it trying to predict.</p>
+<p>In this case the line is trying to predict 12 y values.</p>
+<p>For each point, we can draw the distance between the predicted y value and the
+actual y value, like this:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot the data</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Actual values&#39;</span><span class="p">)</span>
+<span class="c1"># Plot the predicted values</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">predicted_y</span><span class="p">,</span> <span class="s1">&#39;ro&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Values predicted from line&#39;</span><span class="p">)</span>
+<span class="c1"># Plot the distance between predicted and actual, for all points.</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span> <span class="p">[</span><span class="n">predicted_y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span> <span class="s1">&#39;k:&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/104a8ed37315270b0a8a591bbc14d510c55ecd754082b239912f043272771c7d.png" src="_images/104a8ed37315270b0a8a591bbc14d510c55ecd754082b239912f043272771c7d.png" />
+</div>
+</div>
+<p>Here are all 12 differences between the actual and predicted values.  We will call these the prediction <em>errors</em>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">errors</span> <span class="o">=</span> <span class="n">y</span> <span class="o">-</span> <span class="n">predicted_y</span>
+<span class="n">errors</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([ 1.0659, -5.666 ,  1.9871,  4.4183, -5.7105, -4.4243,  5.8652,
+       -1.4548, -1.9713, -3.1245,  7.7467,  6.0564])
+</pre></div>
+</div>
+</div>
+</div>
+<p>If the line was perfect, then all these errors would be zero.   But, given these errors are not zero, how should we use them to give a <em>single</em> number to evaluate the line, where a low number means it is a good line.</p>
+</section>
+<section id="a-bad-measure">
+<h2>A bad measure<a class="headerlink" href="#a-bad-measure" title="Permalink to this heading">#</a></h2>
+<p>It might seem good to add up all the errors, like this:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">sum</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>4.7882
+</pre></div>
+</div>
+</div>
+</div>
+<p>That is not a good idea, because we are just as concerned about the negative and the positive errors.  If we add them up, then big negative errors cancel big positive errors.   The result is that I can make a line that is obviously crazy, and so should have a bad score, but in fact it has just the same score.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># A very bad line</span>
+<span class="n">rotten_inter</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1.8</span>  <span class="c1"># Don&#39;t worry about this calculation</span>
+<span class="n">rotten_slope</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.9</span>  <span class="c1"># The opposite slope from our previous guess!</span>
+<span class="n">rotten_pred_y</span> <span class="o">=</span> <span class="n">rotten_inter</span> <span class="o">+</span> <span class="n">rotten_slope</span> <span class="o">*</span> <span class="n">x</span>
+<span class="n">rotten_pred_y</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([15.5932, 15.7633, 15.7264, 15.5266, 11.8168, 14.956 , 14.4655,
+       11.4685,  8.782 , 10.9168, 10.969 ,  9.6757])
+</pre></div>
+</div>
+</div>
+</div>
+<p>Notice that there are more big positive and big negative errors now:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rotten_errors</span> <span class="o">=</span> <span class="n">y</span> <span class="o">-</span> <span class="n">rotten_pred_y</span>
+<span class="n">rotten_errors</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([ -4.1772, -11.2493,  -3.5224,  -0.6916,  -3.4008,  -8.393 ,
+         2.8775,   1.5515,   6.408 ,   0.9852,  11.752 ,  12.6483])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot the data</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Actual values&#39;</span><span class="p">)</span>
+<span class="c1"># Plot the predicted values</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">rotten_pred_y</span><span class="p">,</span> <span class="s1">&#39;ro&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Values predicted from line&#39;</span><span class="p">)</span>
+<span class="c1"># Plot the distance between predicted and actual, for all points.</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span> <span class="p">[</span><span class="n">rotten_pred_y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span> <span class="s1">&#39;k:&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/f97a3123cb05533368905dd726083ee05c3d9ed0124163a50262f05fc447150e.png" src="_images/f97a3123cb05533368905dd726083ee05c3d9ed0124163a50262f05fc447150e.png" />
+</div>
+</div>
+<p>But the sum is nearly the same, because the positive and negative errors are canceling:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">rotten_errors</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>4.788199999999996
+</pre></div>
+</div>
+</div>
+</div>
+<p>So — what would be a better measure?</p>
+</section>
+<section id="a-better-measure">
+<h2>A better measure<a class="headerlink" href="#a-better-measure" title="Permalink to this heading">#</a></h2>
+<p>We care just as much about negative errors as positive, and we do not want to allow negative errors to cancel out with positive ones.</p>
+<p>There are two obvious ways to fix that.</p>
+<p>One is to throw away the negative signs of the errors before we add them.   We use the <code class="docutils literal notranslate"><span class="pre">np.abs</span></code> function (<code class="docutils literal notranslate"><span class="pre">abs</span></code> for <em>absolute</em>) to throw away the negative signs, like this:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([1.0659, 5.666 , 1.9871, 4.4183, 5.7105, 4.4243, 5.8652, 1.4548,
+       1.9713, 3.1245, 7.7467, 6.0564])
+</pre></div>
+</div>
+</div>
+</div>
+<p>So, a better score would be the sum of the absolute error (SAE).  Notice that,
+this time, the bad line gets a much larger (worse) score than the good line.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">good_line_sae</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">errors</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Good line sum abs error&#39;</span><span class="p">,</span> <span class="n">good_line_sae</span><span class="p">)</span>
+<span class="n">rotten_line_sae</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">rotten_errors</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Rotten line sum abs error&#39;</span><span class="p">,</span> <span class="n">rotten_line_sae</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Good line sum abs error 49.491
+Rotten line sum abs error 67.6568
+</pre></div>
+</div>
+</div>
+</div>
+<p>Another option is to remove the negative signs by squaring all the errors.
+This will also have the effect of making big errors more influential in giving
+the score to the line.   This is called the sum of squared error (SSE).  Again, the bad line gets a bad (large) score:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">good_line_sse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">errors</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Good line sum squared error&#39;</span><span class="p">,</span> <span class="n">good_line_sse</span><span class="p">)</span>
+<span class="n">rotten_line_sse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">rotten_errors</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Rotten line sum squared error&#39;</span><span class="p">,</span> <span class="n">rotten_line_sse</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Good line sum squared error 255.75076072
+Rotten line sum squared error 589.6984907200001
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can also take the mean of the squared (or absolute) error, instead of the
+sum.  In the squared case, this is the Mean Squared Error (MSE).  This is just
+the sum value divided by the number of values.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">good_line_mse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">errors</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Good line mean squared error&#39;</span><span class="p">,</span> <span class="n">good_line_mse</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The same as SSE divided by n&#39;</span><span class="p">,</span> <span class="n">good_line_sse</span> <span class="o">/</span> <span class="n">n</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Good line mean squared error 21.31256339333333
+The same as SSE divided by n 21.31256339333333
+</pre></div>
+</div>
+</div>
+</div>
+<p>The MSE can be easier to think about, because it is the average error per
+point.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">good_line_mse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">errors</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Good line mean squared error&#39;</span><span class="p">,</span> <span class="n">good_line_mse</span><span class="p">)</span>
+<span class="n">rotten_line_mse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">rotten_errors</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Rotten line mean squared error&#39;</span><span class="p">,</span> <span class="n">rotten_line_mse</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Good line mean squared error 21.31256339333333
+Rotten line mean squared error 49.14154089333334
+</pre></div>
+</div>
+</div>
+</div>
+<p>In fact, we will prefer MSE (or, equivalently, SSE) to the sum or mean of the absolute error, because it has some nice mathematical properties, that we will not go into now.</p>
+</section>
+<section id="intercept-slope-intercept">
+<h2>Intercept?  Slope?  Intercept?<a class="headerlink" href="#intercept-slope-intercept" title="Permalink to this heading">#</a></h2>
+<p>We now have a problem, because we want to find the <em>best</em> (slope and
+intercept).  By <em>best</em> we will say we mean the (slope, intercept) pair that
+gives the lowest MSE, of all possible (slope, intercept) pairs.</p>
+<p>But — where to start?  I can set the intercept, and try lots of slopes, and
+find the one that gives the lowest MSE, but then I need to try another intercept, and another.</p>
+<p>One way of removing this problem is working on x and y values in the form of
+z-scores.  When we do this, it turns out, for mathematical reasons we <a class="reference internal" href="why_mse_correlation.html"><span class="doc std std-doc">go into
+here</span></a>, that the best (MSE) intercept is always 0.
+That simplifies our problem, because we can assume the intercept is 0, and just
+look at the slopes.</p>
+</section>
+<section id="to-z-scores">
+<h2>To z-scores<a class="headerlink" href="#to-z-scores" title="Permalink to this heading">#</a></h2>
+<p>As you remember from <a class="reference internal" href="voxel_time_courses.html#on-correlation"><span class="std std-ref">A reminder on correlation</span></a>, we generate z-scores by subtracting the mean, and dividing by the standard deviation.</p>
+<p>Let’s do that for our x and y:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x_z</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">y_z</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y</span><span class="p">))</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>While we are here, let’s calculate the correlation.  We will all the correlation value <code class="docutils literal notranslate"><span class="pre">r</span></code>, because that’s the standard letter for the <a class="reference external" href="https://en.wikipedia.org/wiki/Pearson_correlation_coefficient">Pearson correlation</a> that we are using here.  In fact, it is often called “Pearson’s r” - see the Wikipedia page.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Calculate the correlation</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x_z</span> <span class="o">*</span> <span class="n">y_z</span><span class="p">)</span>
+<span class="n">r</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.5178777312914015
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Or course this is (within tiny floating-point error) the same as:</span>
+<span class="n">np</span><span class="o">.</span><span class="n">corrcoef</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.5178777312914012
+</pre></div>
+</div>
+</div>
+</div>
+<p>When we plot these z-score versions, we see that an intercept of 0 looks about
+right:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_z</span><span class="p">,</span> <span class="n">y_z</span><span class="p">,</span> <span class="s1">&#39;+&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;x, y in z-score form&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 1.0, &#39;x, y in z-score form&#39;)
+</pre></div>
+</div>
+<img alt="_images/6db5fdf368459ab8013e7fd35101fa4900868aad1852d4248ed75838be72aeed.png" src="_images/6db5fdf368459ab8013e7fd35101fa4900868aad1852d4248ed75838be72aeed.png" />
+</div>
+</div>
+<p>Let’s try a slope of about 0.6, and an intercept of 0.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pred_y_z</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">+</span> <span class="mf">0.6</span> <span class="o">*</span> <span class="n">x_z</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_z</span><span class="p">,</span> <span class="n">y_z</span><span class="p">,</span> <span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Actual&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_z</span><span class="p">,</span> <span class="n">pred_y_z</span><span class="p">,</span> <span class="s1">&#39;ro&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Predicted&#39;</span><span class="p">)</span>
+<span class="c1"># Draw the predicting line</span>
+<span class="n">x_lims</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_lims</span><span class="p">,</span> <span class="mi">0</span> <span class="o">+</span> <span class="n">x_lims</span> <span class="o">*</span> <span class="mf">0.6</span><span class="p">,</span> <span class="s1">&#39;:&#39;</span><span class="p">)</span>
+<span class="c1"># Draw the errors</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x_z</span><span class="p">)):</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">x_z</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">x_z</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span> <span class="p">[</span><span class="n">y_z</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">pred_y_z</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span> <span class="s1">&#39;k:&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;x, y in z-score form, with guessed line and predictions&#39;</span><span class="p">)</span>
+<span class="c1"># Make the axes scale x and y to equal lengths per unit.</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">)</span>
+<span class="c1"># Put legend for points.</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7fd83b75bf70&gt;
+</pre></div>
+</div>
+<img alt="_images/f70e8a986269436a48854fe86f2ea629cef75aa196f201a60154099d9c89d0b9.png" src="_images/f70e8a986269436a48854fe86f2ea629cef75aa196f201a60154099d9c89d0b9.png" />
+</div>
+</div>
+<p>In fact, let’s make that into a function to do some plots later:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">plot_line_data</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">slope</span><span class="p">,</span> <span class="n">inter</span><span class="p">,</span> <span class="n">x_lims</span><span class="p">):</span>
+    <span class="n">pred_y</span> <span class="o">=</span> <span class="n">inter</span> <span class="o">+</span> <span class="n">slope</span> <span class="o">*</span> <span class="n">x</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Actual&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">pred_y</span><span class="p">,</span> <span class="s1">&#39;ro&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Predicted&#39;</span><span class="p">)</span>
+    <span class="c1"># Draw the predicting line</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_lims</span><span class="p">,</span> <span class="n">inter</span> <span class="o">+</span> <span class="n">slope</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x_lims</span><span class="p">),</span> <span class="s1">&#39;:&#39;</span><span class="p">)</span>
+    <span class="c1"># Draw the errors</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span> <span class="p">[</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">pred_y</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span> <span class="s1">&#39;k:&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pred_y</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_line_data</span><span class="p">(</span><span class="n">x_z</span><span class="p">,</span> <span class="n">y_z</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Same graph using function&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7fd83b770d30&gt;
+</pre></div>
+</div>
+<img alt="_images/086b39804d0617aef00069dd5f3bd780dbfef06c2502ce56e22e3d68e0aa7bd6.png" src="_images/086b39804d0617aef00069dd5f3bd780dbfef06c2502ce56e22e3d68e0aa7bd6.png" />
+</div>
+</div>
+<p>The MSE is:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">errors</span> <span class="o">=</span> <span class="n">y_z</span> <span class="o">-</span> <span class="n">pred_y_z</span>
+<span class="n">mse_for_guess</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">errors</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">mse_for_guess</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.7385467224503185
+</pre></div>
+</div>
+</div>
+</div>
+<p>Our life will be easier with a function to calculate the MSE for a given slope and intercept.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">calc_mse</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">slope</span><span class="p">,</span> <span class="n">inter</span><span class="p">):</span>
+    <span class="n">predicted</span> <span class="o">=</span> <span class="n">inter</span> <span class="o">+</span> <span class="n">slope</span> <span class="o">*</span> <span class="n">x</span>
+    <span class="n">errors</span> <span class="o">=</span> <span class="n">y</span> <span class="o">-</span> <span class="n">predicted</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">errors</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">calc_mse</span><span class="p">(</span><span class="n">x_z</span><span class="p">,</span> <span class="n">y_z</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.7385467224503185
+</pre></div>
+</div>
+</div>
+</div>
+<p>We assumed that 0 was the <em>best</em> intercept in the sense of giving the smallest MSE, but is that true?</p>
+<p>Let’s try lots of intercepts, with a given slope of 0.6, and see what MSE values we get.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># -1 to 1 in steps of 0.001</span>
+<span class="n">intercepts_to_try</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">2000</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1000</span> <span class="o">-</span> <span class="mi">1</span>
+<span class="n">n_intercepts</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">intercepts_to_try</span><span class="p">)</span>
+<span class="c1"># Corresponding MSE values</span>
+<span class="n">mses_for_intercepts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_intercepts</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_intercepts</span><span class="p">):</span>
+    <span class="n">inter</span> <span class="o">=</span> <span class="n">intercepts_to_try</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">mses_for_intercepts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">calc_mse</span><span class="p">(</span><span class="n">x_z</span><span class="p">,</span> <span class="n">y_z</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="n">inter</span><span class="p">)</span>
+<span class="n">mses_for_intercepts</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([1.738547, 1.736548, 1.734551, 1.732556, 1.730563, 1.728572,
+       1.726583, 1.724596, 1.722611, 1.720628])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">intercepts_to_try</span><span class="p">,</span> <span class="n">mses_for_intercepts</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;intercept&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;MSE for intercept&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;MSE values for intercepts, slope=0.6&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 1.0, &#39;MSE values for intercepts, slope=0.6&#39;)
+</pre></div>
+</div>
+<img alt="_images/e3f410a8e8d5c07eadb9487711ad34a5e2d8cae73ac46eae5121156c0bf23e7c.png" src="_images/e3f410a8e8d5c07eadb9487711ad34a5e2d8cae73ac46eae5121156c0bf23e7c.png" />
+</div>
+</div>
+<p>This is the minimum (best) value we found for MSE, for all the intercepts we tried.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">mses_for_intercepts</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.7385467224503185
+</pre></div>
+</div>
+</div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">np.argmin</span></code> function tells us the <em>index</em> (position) of this minimum value.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">min_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">mses_for_intercepts</span><span class="p">)</span>
+<span class="n">min_index</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1000
+</pre></div>
+</div>
+</div>
+</div>
+<p>By the definition of the <code class="docutils literal notranslate"><span class="pre">np.argmin</span></code> function, the value of <code class="docutils literal notranslate"><span class="pre">mses_for_intercepts</span></code> at this index, is the minimum.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mses_for_intercepts</span><span class="p">[</span><span class="n">min_index</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.7385467224503185
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now we know the index of the minimum value, we can find the intercept value that corresponds to this MSE value:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">intercepts_to_try</span><span class="p">[</span><span class="n">min_index</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.0
+</pre></div>
+</div>
+</div>
+</div>
+<p>Sure enough, as we asserted before, 0 was the intercept value giving the lowest (best) MSE, for all the intercepts we tried.</p>
+<p>But - maybe that is only true for our particular slope: 0.6.  We will try a different slope - say 0.2</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Corresponding MSE values</span>
+<span class="n">mses_for_intercepts_0p2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_intercepts</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_intercepts</span><span class="p">):</span>
+    <span class="n">inter</span> <span class="o">=</span> <span class="n">intercepts_to_try</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">mses_for_intercepts_0p2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">calc_mse</span><span class="p">(</span><span class="n">x_z</span><span class="p">,</span> <span class="n">y_z</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="n">inter</span><span class="p">)</span>
+<span class="n">mses_for_intercepts</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([1.738547, 1.736548, 1.734551, 1.732556, 1.730563, 1.728572,
+       1.726583, 1.724596, 1.722611, 1.720628])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">intercepts_to_try</span><span class="p">,</span> <span class="n">mses_for_intercepts_0p2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;intercept&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;MSE for intercept&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;MSE values for intercepts, slope=0.2&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 1.0, &#39;MSE values for intercepts, slope=0.2&#39;)
+</pre></div>
+</div>
+<img alt="_images/b31410d1b3051b458b6180c5a5f9416cb74c7be22826db446383f3f0be46aa56.png" src="_images/b31410d1b3051b458b6180c5a5f9416cb74c7be22826db446383f3f0be46aa56.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">min_index_0p2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">mses_for_intercepts_0p2</span><span class="p">)</span>
+<span class="n">mses_for_intercepts_0p2</span><span class="p">[</span><span class="n">min_index_0p2</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.8328489074834392
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">intercepts_to_try</span><span class="p">[</span><span class="n">min_index_0p2</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.0
+</pre></div>
+</div>
+</div>
+</div>
+<p>Our preliminary guess - that turns out to be right when we analyze this mathematically - is that 0 is <em>always</em> the best intercept for z-scored x and y, regardless of slope, and regardless of the x and y that we z-scored.</p>
+<p>Now let’s find the best slope, assuming an intercept of 0.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># -1 to 1 in steps of 0.001</span>
+<span class="n">slopes_to_try</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">2000</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1000</span> <span class="o">-</span> <span class="mi">1</span>
+<span class="n">n_slopes</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">slopes_to_try</span><span class="p">)</span>
+<span class="n">mses_for_slopes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_slopes</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_slopes</span><span class="p">):</span>
+    <span class="n">slope</span> <span class="o">=</span> <span class="n">slopes_to_try</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">mses_for_slopes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">calc_mse</span><span class="p">(</span><span class="n">x_z</span><span class="p">,</span> <span class="n">y_z</span><span class="p">,</span> <span class="n">slope</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">mses_for_slopes</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([3.035755, 3.032721, 3.029688, 3.026657, 3.023628, 3.020602,
+       3.017577, 3.014554, 3.011533, 3.008515])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">slopes_to_try</span><span class="p">,</span> <span class="n">mses_for_slopes</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;slope&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;MSE for slope&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;MSE values for slopes, intercept=0&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 1.0, &#39;MSE values for slopes, intercept=0&#39;)
+</pre></div>
+</div>
+<img alt="_images/96ffd6ba6cf3e704e33613caa68824606aeb33af17d7ee6ad93c81aa532551c6.png" src="_images/96ffd6ba6cf3e704e33613caa68824606aeb33af17d7ee6ad93c81aa532551c6.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">min_index_slope</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">mses_for_slopes</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Min MSE for slopes&#39;</span><span class="p">,</span> <span class="n">mses_for_slopes</span><span class="p">[</span><span class="n">min_index_slope</span><span class="p">])</span>
+<span class="n">best_slope</span> <span class="o">=</span> <span class="n">slopes_to_try</span><span class="p">[</span><span class="n">min_index_slope</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Slope giving min MSE&#39;</span><span class="p">,</span> <span class="n">best_slope</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Min MSE for slopes 0.7318026703821082
+Slope giving min MSE 0.518
+</pre></div>
+</div>
+</div>
+</div>
+<p>Wait - but <code class="docutils literal notranslate"><span class="pre">best_slope</span></code> is almost exactly the same as the correlation!.  And in fact, it is not exactly the same only because we are not trying every value for <code class="docutils literal notranslate"><span class="pre">slope</span></code>, but only in steps 0.001 apart.  With the <code class="docutils literal notranslate"><span class="pre">r</span></code> (correlation) value for <code class="docutils literal notranslate"><span class="pre">slope</span></code>, we get value for MSE that is even a tiny bit <em>lower</em> than the best value we found by searching.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">calc_mse</span><span class="p">(</span><span class="n">x_z</span><span class="p">,</span> <span class="n">y_z</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.731802655432471
+</pre></div>
+</div>
+</div>
+</div>
+<p>We have discovered that the r value (correlation) is also the slope of the
+best-fit (MSE) line for the z-scored x and y values.</p>
+<p>If you are interested to see <em>why</em> the best MSE error line must have slope <span class="math notranslate nohighlight">\(r\)</span> and intercept 0, have a look at the <a class="reference internal" href="why_mse_correlation.html"><span class="doc std std-doc">mathematics of the correlation line</span></a>.</p>
+<p>Here’s the best-fit line, using, using <code class="docutils literal notranslate"><span class="pre">r</span></code>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_line_data</span><span class="p">(</span><span class="n">x_z</span><span class="p">,</span> <span class="n">y_z</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Best-fit (MSE) line to z-scored data&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;matplotlib.legend.Legend at 0x7fd83b42ec50&gt;
+</pre></div>
+</div>
+<img alt="_images/578efaeaf7b5a5bfab987961ef8d8435f000208d26a074d5a8d7fab7d8994a38.png" src="_images/578efaeaf7b5a5bfab987961ef8d8435f000208d26a074d5a8d7fab7d8994a38.png" />
+</div>
+</div>
+</section>
+<section id="best-fit-line-for-the-original-data">
+<h2>Best fit line for the original data<a class="headerlink" href="#best-fit-line-for-the-original-data" title="Permalink to this heading">#</a></h2>
+<p>We now have the best-fit line for the z-score data.  What does this line look like for the original data, before the z-score transformation?</p>
+<p>To answer this question, we gradually undo the z-score transformations, while keeping track on the effect on the best-bit line.  First let’s multiply the <code class="docutils literal notranslate"><span class="pre">y_z</span></code> values by the standard deviation of the original <code class="docutils literal notranslate"><span class="pre">y</span></code>s to undo that part of the z-transformation.  The result is the <code class="docutils literal notranslate"><span class="pre">y</span></code> values that just have the mean subtracted.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">y_minus_mean</span> <span class="o">=</span> <span class="n">y_z</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>  <span class="c1"># Undo division by standard deviation</span>
+<span class="n">plot_line_data</span><span class="p">(</span><span class="n">x_z</span><span class="p">,</span> <span class="n">y_minus_mean</span><span class="p">,</span> <span class="n">r</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">]))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Best-fit (MSE) line to z-scored x, de-meaned y&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 1.0, &#39;Best-fit (MSE) line to z-scored x, de-meaned y&#39;)
+</pre></div>
+</div>
+<img alt="_images/cd7470071092f945804d4640f17deb6da8968f7f4e64d9fcad996fa0bedcb547.png" src="_images/cd7470071092f945804d4640f17deb6da8968f7f4e64d9fcad996fa0bedcb547.png" />
+</div>
+</div>
+<p>Notice that, when we do this, the <code class="docutils literal notranslate"><span class="pre">y</span></code> values all stretch on the <code class="docutils literal notranslate"><span class="pre">y</span></code> axis by a factor of <code class="docutils literal notranslate"><span class="pre">np.std(y)</span></code> How about slope of the best-fit line?</p>
+<p>Remember, the slope is the number of units that y increases for a one-unit increase in x.  Because the y values scale by a factor of <code class="docutils literal notranslate"><span class="pre">np.std(y)</span></code>, the number of units of y for a one-unit increase in x also scales by a factor of <code class="docutils literal notranslate"><span class="pre">np.std(y)</span></code>, and the equivalent best-fit line has slope <code class="docutils literal notranslate"><span class="pre">r</span> <span class="pre">*</span> <span class="pre">np.std(y)</span></code>.</p>
+<p>Next we undo the <code class="docutils literal notranslate"><span class="pre">np.std(x)</span></code> transformation the <code class="docutils literal notranslate"><span class="pre">x_z</span></code> values.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">x_minus_mean</span> <span class="o">=</span> <span class="n">x_z</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># Undo division by standard deviation on x.</span>
+<span class="n">pred_y_minus_mean</span> <span class="o">=</span> <span class="n">plot_line_data</span><span class="p">(</span><span class="n">x_minus_mean</span><span class="p">,</span> <span class="n">y_minus_mean</span><span class="p">,</span> <span class="n">r</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">]))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Best-fit (MSE) line to de-meaned x and y&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 1.0, &#39;Best-fit (MSE) line to de-meaned x and y&#39;)
+</pre></div>
+</div>
+<img alt="_images/b0a8764ea3896d64c45c2b05a363c32d296a6c33ac4d6d83a394f27b81645273.png" src="_images/b0a8764ea3896d64c45c2b05a363c32d296a6c33ac4d6d83a394f27b81645273.png" />
+</div>
+</div>
+<p>Now the <code class="docutils literal notranslate"><span class="pre">x_z</span></code> values stretch by a factor of <code class="docutils literal notranslate"><span class="pre">np.std(x)</span></code> along the x-axis.  The previous y increase for one unit in x (the slope) becomes the y increase for a <code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">*</span> <span class="pre">np.std(x)</span></code> increase on x, so, to get the new slope, we divide the previous slope by <code class="docutils literal notranslate"><span class="pre">np.std(x)</span></code>.</p>
+<p>The last thing we need to do is undo the subtraction of <code class="docutils literal notranslate"><span class="pre">np.mean(y)</span></code> and <code class="docutils literal notranslate"><span class="pre">np.mean(x)</span></code>.   When we do this, we shift all the points <code class="docutils literal notranslate"><span class="pre">np.mean(y)</span></code> up on the y-axis, and <code class="docutils literal notranslate"><span class="pre">np.mean(x)</span></code> right on the x-axis, like this:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">y_back_again</span> <span class="o">=</span> <span class="n">y_minus_mean</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>  <span class="c1"># Obviously also == y</span>
+<span class="n">x_back_again</span> <span class="o">=</span> <span class="n">x_minus_mean</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># Obviously also == x</span>
+<span class="n">pred_y_back_again</span> <span class="o">=</span> <span class="n">pred_y_minus_mean</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_back_again</span><span class="p">,</span> <span class="n">y_back_again</span><span class="p">,</span> <span class="s1">&#39;+&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_back_again</span><span class="p">,</span> <span class="n">pred_y_back_again</span><span class="p">,</span> <span class="s1">&#39;ro&#39;</span><span class="p">)</span>
+<span class="c1"># Set axis limits for comparison with plot below.</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mf">9.5</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">,</span> <span class="mi">24</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Original data, and transformed predictions&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/feb3ad82e0565293fef7cb39ca9af5ad3ce0b0abb738a75c5c5a43dd0088e1f5.png" src="_images/feb3ad82e0565293fef7cb39ca9af5ad3ce0b0abb738a75c5c5a43dd0088e1f5.png" />
+</div>
+</div>
+<p>It might seem intuitive, and it is in fact correct, that when we shift the points on the graph like this, we can shift the line with them.  That is, the line just moves with the points, as you can see from the updated predictions above.  So, the slope does not change, and we already know the slope.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">best_original_slope</span> <span class="o">=</span> <span class="n">r</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">best_original_slope</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.9992572262138827
+</pre></div>
+</div>
+</div>
+</div>
+<p>Although the slope has not changed, the point that the line hits the y axis has - and that is the intercept.</p>
+<p>To find the new intercept, we can track back from any point we know is on the new line.   One convenient point is the shifted origin.  Before we added back the means, the origin, at 0, 0, was on the line.  After we add back the means, that point has moved to position <code class="docutils literal notranslate"><span class="pre">np.mean(x),</span> <span class="pre">np.mean(y)</span></code>, so we know that point is on the line.  To track back from that point along the line to the y-axis, we move <code class="docutils literal notranslate"><span class="pre">-np.mean(x)</span></code> units along the line.   So, in terms of y, we start at <code class="docutils literal notranslate"><span class="pre">np.mean(y)</span></code> then move <code class="docutils literal notranslate"><span class="pre">best_original_slope</span> <span class="pre">*</span> <span class="pre">-np.mean(y)</span></code> units as we move along the x-axis.  The new intercept is therefore:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">best_original_intercept</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">-</span> <span class="n">best_original_slope</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">best_original_intercept</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>10.071285848579462
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_line_data</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span>
+               <span class="n">best_original_slope</span><span class="p">,</span> <span class="n">best_original_intercept</span><span class="p">,</span>
+               <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">9</span><span class="p">]))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Best-fit (MSE) line to orinal data, reconstructed from r&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/19bf24ea4e21f7c9611006e2ff2ba107d7437965b9a07a336eab256157229400.png" src="_images/19bf24ea4e21f7c9611006e2ff2ba107d7437965b9a07a336eab256157229400.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">calc_mse</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">best_original_slope</span><span class="p">,</span> <span class="n">best_original_intercept</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>21.07713387082818
+</pre></div>
+</div>
+</div>
+</div>
+<p>To confirm that is these are in fact the best (MSE) slope and intercept, we would have to calculate the MSE for all possible intercept and slope pairs, but here we just confirm that if we assume the intercept is correct, we have the best slope:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Try slopes between 0 and 2 in steps of 1/1000</span>
+<span class="n">orig_slopes_to_try</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">2000</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1000</span>
+<span class="n">n_orig_slopes</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">orig_slopes_to_try</span><span class="p">)</span>
+<span class="n">mses_for_orig_slopes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_orig_slopes</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_orig_slopes</span><span class="p">):</span>
+    <span class="n">slope</span> <span class="o">=</span> <span class="n">orig_slopes_to_try</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">mses_for_orig_slopes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">calc_mse</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">slope</span><span class="p">,</span> <span class="n">best_original_intercept</span><span class="p">)</span>
+<span class="n">mses_for_orig_slopes</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([39.687577, 39.650347, 39.613155, 39.575999, 39.538881, 39.501801,
+       39.464757, 39.427751, 39.390782, 39.35385 ])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">orig_slopes_to_try</span><span class="p">,</span> <span class="n">mses_for_orig_slopes</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x7fd83b174100&gt;]
+</pre></div>
+</div>
+<img alt="_images/def3ad2acabebe681eef7bbf89f6fdf0ac5525763da7c1d054aa25ad4f7bf621.png" src="_images/def3ad2acabebe681eef7bbf89f6fdf0ac5525763da7c1d054aa25ad4f7bf621.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># The slope giving the lowest MSE in the search.</span>
+<span class="n">orig_slopes_to_try</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">mses_for_orig_slopes</span><span class="p">)]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.999
+</pre></div>
+</div>
+</div>
+</div>
+<p>And, if we assume the slope is correct, we have the best intercept:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Try intercepts between 0 and 20 in steps of 1/1000</span>
+<span class="n">orig_inters_to_try</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">20000</span><span class="p">)</span> <span class="o">/</span> <span class="mi">1000</span>
+<span class="n">n_orig_inters</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">orig_inters_to_try</span><span class="p">)</span>
+<span class="n">mses_for_orig_inters</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_orig_inters</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_orig_inters</span><span class="p">):</span>
+    <span class="n">inter</span> <span class="o">=</span> <span class="n">orig_inters_to_try</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">mses_for_orig_inters</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">calc_mse</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">best_original_slope</span><span class="p">,</span> <span class="n">inter</span><span class="p">)</span>
+<span class="n">mses_for_orig_inters</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([122.507933, 122.487791, 122.467651, 122.447514, 122.427378,
+       122.407245, 122.387113, 122.366984, 122.346856, 122.32673 ])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">orig_inters_to_try</span><span class="p">,</span> <span class="n">mses_for_orig_inters</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x7fd83b1e9510&gt;]
+</pre></div>
+</div>
+<img alt="_images/03df0dcb0b6d5afc55465df9f96e36030caafe8cd37dac695b11725d7efde7eb.png" src="_images/03df0dcb0b6d5afc55465df9f96e36030caafe8cd37dac695b11725d7efde7eb.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># The intercept giving the lowest MSE in the search.</span>
+<span class="n">orig_inters_to_try</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">mses_for_orig_inters</span><span class="p">)]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>10.071
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Question</strong>: How would you try a large number of slope, intercept pairs to see which is the best?  <strong>Hint</strong>: You might consider using a 2D array somewhere.</p>
+</section>
+<section id="automating-the-best-slope-calculation-with-scipy">
+<h2>Automating the best-slope calculation with Scipy<a class="headerlink" href="#automating-the-best-slope-calculation-with-scipy" title="Permalink to this heading">#</a></h2>
+<p>We can ask Scipy to use a calculation that is based on the correlation calculation above, to get this best slope and intercept automatically:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">scipy.stats</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">results</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">linregress</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">results</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>LinregressResult(slope=0.9992572262138825, intercept=10.071285848579462, rvalue=0.5178777312914014, pvalue=0.0845895203804765, stderr=0.5219718130218388, intercept_stderr=2.2534509778472835)
+</pre></div>
+</div>
+</div>
+</div>
+<p>Notice the slope, intercept and correlation values are (almost precisely) the same as we found using our correlation calculations above.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "matthew-brett/dipy-textbook",
+            ref: "main",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+                <footer class="bd-footer-article">
+                  
+<div class="footer-article-items footer-article__inner">
+  
+    <div class="footer-article-item"><!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="convolution_background.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Convolving with the hemodyamic response function</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="regress_one_voxel.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Regression for a single voxel</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div></div>
+  
+</div>
+
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-example-regression-problem">The example regression problem</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simple-linear-regression">Simple linear regression</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-good-guess">A good guess</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-bad-measure">A bad measure</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-better-measure">A better measure</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#intercept-slope-intercept">Intercept?  Slope?  Intercept?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#to-z-scores">To z-scores</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#best-fit-line-for-the-original-data">Best fit line for the original data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#automating-the-best-slope-calculation-with-scipy">Automating the best-slope calculation with Scipy</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By The nipraxis team
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

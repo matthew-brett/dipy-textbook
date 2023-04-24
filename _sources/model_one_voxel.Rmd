@@ -1,0 +1,138 @@
+---
+jupyter:
+  jupytext:
+    notebook_metadata_filter: all,-language_info
+    split_at_heading: true
+    text_representation:
+      extension: .Rmd
+      format_name: rmarkdown
+      format_version: '1.2'
+      jupytext_version: 1.13.7
+  kernelspec:
+    display_name: Python 3
+    language: python
+    name: python3
+---
+
+# Modeling a single voxel
+
+The [voxel regression page](regress_one_voxel.Rmd) has a worked
+example of applying [simple regression](on_regression.Rmd)) on a single voxel.
+
+This page runs the same calculations, but using the [General Linear
+Model](glm_intro.Rmd) notation and matrix calculations.
+
+Let’s get that same voxel time course back again:
+
+```{python}
+import numpy as np
+import matplotlib.pyplot as plt
+import nibabel as nib
+# Only show 6 decimals when printing
+np.set_printoptions(precision=6)
+```
+
+```{python}
+# Load the function to fetch the data file we need.
+import nipraxis
+# Fetch the data file.
+data_fname = nipraxis.fetch_file('ds114_sub009_t2r1.nii')
+img = nib.load(data_fname)
+data = img.get_fdata()
+# Knock off the first four volumes (to avoid artefact).
+data = data[..., 4:]
+# Get the voxel time course of interest.
+voxel_time_course = data[42, 32, 19]
+plt.plot(voxel_time_course)
+```
+
+Load the convolved time course, and plot the voxel values against the convolved regressor:
+
+```{python}
+tc_fname = nipraxis.fetch_file('ds114_sub009_t2r1_conv.txt')
+# Show the file name of the fetched data.
+convolved = np.loadtxt(tc_fname)
+# Knock off first 4 elements to match data.
+convolved = convolved[4:]
+# Plot.
+plt.scatter(convolved, voxel_time_course)
+plt.xlabel('Convolved prediction')
+plt.ylabel('Voxel values')
+```
+
+As you remember, we apply the GLM by first preparing a design matrix, that has one column corresponding for each *parameter* in the *model*.
+
+In our case we have two parameters, the *slope* and the *intercept*.
+
+First we make our *design matrix*.  It has a column for the convolved
+regressor, and a column of ones:
+
+```{python}
+N = len(convolved)
+X = np.ones((N, 2))
+X[:, 0] = convolved
+plt.imshow(X, cmap='gray', aspect=0.1)
+```
+
+$\newcommand{\yvec}{\vec{y}}$
+$\newcommand{\xvec}{\vec{x}}$
+$\newcommand{\evec}{\vec{\varepsilon}}$
+$\newcommand{Xmat}{\boldsymbol X} \newcommand{\bvec}{\vec{\beta}}$
+$\newcommand{\bhat}{\hat{\bvec}} \newcommand{\yhat}{\hat{\yvec}}$
+
+Our model is:
+
+$$
+\yvec = \Xmat \bvec + \evec
+$$
+
+We can get our least mean squared error (MSE) parameter *estimates* for
+$\bvec$ with:
+
+$$
+\bhat = \Xmat^+y
+$$
+
+where $\Xmat^+$ is the *pseudoinverse* of $\Xmat$.  When $\Xmat$ is
+invertible, the pseudoinverse is given by:
+
+$$
+\Xmat^+ = (\Xmat^T \Xmat)^{-1} \Xmat^T
+$$
+
+Let’s calculate the pseudoinverse for our design:
+
+```{python}
+import numpy.linalg as npl
+Xp = npl.pinv(X)
+Xp.shape
+```
+
+We calculate $\bhat$:
+
+```{python}
+beta_hat = Xp @ voxel_time_course
+beta_hat
+```
+
+We can then calculate $\yhat$ (also called the *fitted data*):
+
+```{python}
+y_hat = X @ beta_hat
+```
+
+Finally, we may be interested to calculate the MSE of this model:
+
+```{python}
+# Residuals are actual minus fitted.
+e_vec = voxel_time_course - y_hat
+mse = np.mean(e_vec ** 2)
+mse
+```
+
+Notice that the $\bhat$ parameters are the same as the slope and intercept from the Scipy calculation using `linregress`:
+
+```{python}
+import scipy.stats as sps
+sps.linregress(convolved, voxel_time_course)
+```

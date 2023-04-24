@@ -1,0 +1,1246 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Boolean indexing with more than one dimension &#8212; Practice and theory of brain imaging - Dipy edition</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'boolean_indexing_nd';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Working with four dimensional images, masks and functions" href="intro_to_4d.html" />
+    <link rel="prev" title="Indexing with Boolean arrays" href="boolean_indexing.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+  
+
+<a class="navbar-brand logo" href="intro.html">
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/reggie.png" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="_static/reggie.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="intro.html">
+                    Practice and theory of brain imaging
+                </a>
+            </li>
+        </ul>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">The neuroimaging problem</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="the_problem.html">The problem and the plan</a></li>
+
+
+
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">The tools</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="to_code.html">Ode to code</a></li>
+<li class="toctree-l1"><a class="reference internal" href="surviving_computers.html">Surviving the computer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="the_software.html">Our tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="using_jupyter.html">Using Jupyter notebooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="more_on_jupyter.html">More on the Jupyter notebook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="brisk_python.html">Brisk introduction to Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installing on your computer</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Images and code and images</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="pathlib.html">Using the <code class="docutils literal notranslate"><span class="pre">pathlib</span></code> module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="what_is_an_image.html">What is an image?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="numpy_intro.html">Introduction to Numpy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boolean_arrays.html">Boolean arrays</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reshape_and_2d.html">Two-dimensions, reshaping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="arrays_and_images.html">Arrays as images, images as arrays</a></li>
+<li class="toctree-l1"><a class="reference internal" href="arrays_3d.html">Three-dimensional arrays</a></li>
+<li class="toctree-l1"><a class="reference internal" href="images_3d.html">Three-dimensional images, NIfTI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reshape_and_3d.html">Reshaping and three-dimensional arrays</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boolean_indexing.html">Indexing with Boolean arrays</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Boolean indexing with more than one dimension</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro_to_4d.html">Working with four dimensional images, masks and functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reshape_and_4d.html">Reshaping, 4D to 2D</a></li>
+<li class="toctree-l1"><a class="reference internal" href="voxels_by_time.html">Voxels and time</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Working reproducibly</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="on_modules.html">Modules and scripts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sys_path.html">Where does Python look for modules?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="assert.html">Using <code class="docutils literal notranslate"><span class="pre">assert</span></code> for testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="coding_style.html">Python coding style</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docstrings.html">Docstrings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module_directories.html">Module directories</a></li>
+<li class="toctree-l1"><a class="reference internal" href="on_testing.html">On testing</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Detecting activation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="voxel_time_courses.html">Correlating with voxel time courses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="on_convolution.html">Convolution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="convolution_background.html">Convolving with the hemodyamic response function</a></li>
+<li class="toctree-l1"><a class="reference internal" href="on_regression.html">Introducing regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="regress_one_voxel.html">Regression for a single voxel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="regression_notation.html">Notation for regression models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="glm_intro.html">Introduction to the general linear model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mean_test_example.html">A worked example of the general linear model</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="model_one_voxel.html">Modeling a single voxel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multi_multiply.html">Estimation for many voxels at the same time</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hypothesis_tests.html">Hypothesis testing with the general linear model</a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="test_one_voxel.html">Testing a single voxel</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="non_tr_onsets.html">Using onsets that do not start on a TR</a></li>
+<li class="toctree-l1"><a class="reference internal" href="whole_image_statistics.html">Whole-brain t tests and p values</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bonferroni_correction.html">Notes on the Bonferroni threshold</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Spatial processing</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="slice_timing.html">Slice timing correction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optimizing_space.html">Calculating transformations between images</a></li>
+<li class="toctree-l1"><a class="reference internal" href="diagonal_zooms.html">Encoding zooms (scaling) with a diagonal matrix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nibabel_affines.html">The <code class="docutils literal notranslate"><span class="pre">nibabel.affines</span></code> module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nibabel_apply_affine.html">Applying coordinate transforms with <code class="docutils literal notranslate"><span class="pre">nibabel.affines.apply_affine</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="map_coordinates.html">General resampling between images with <code class="docutils literal notranslate"><span class="pre">scipy.ndimage.map_coordinates</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="image_header_and_affine.html">The image header and affine</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="images_and_affines.html">Images and affines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rotation_2d_3d.html">Rotations and rotation matrices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="resampling_with_ndimage.html">Resampling with <code class="docutils literal notranslate"><span class="pre">scipy.ndimage</span></code></a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="dipy_registration.html">Registration with dipy</a></li>
+
+<li class="toctree-l1"><a class="reference internal" href="anterior_cingulate.html">Anterior cingulate</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Notes on arrays and plots</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="methods_vs_functions.html">Methods vs functions in NumPy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="allclose.html">Testing for near equality with “allclose”</a></li>
+<li class="toctree-l1"><a class="reference internal" href="arange.html">NumPy arange</a></li>
+<li class="toctree-l1"><a class="reference internal" href="numpy_logical.html">Logical operations on Boolean arrays</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dot_outer.html">Vector and matrix dot products, “np.outer”</a></li>
+<li class="toctree-l1"><a class="reference internal" href="newaxis.html">Adding length 1 dimensions with newaxis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="array_reductions.html">Array reduction operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="numpy_random.html">Numpy random number generators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="subtract_means.html">Subtracting the mean from columns or rows</a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="plot_lines.html">Plotting lines in matplotlib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="subplots.html">Subplots and axes in matplotlib</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://mybinder.org/v2/gh/matthew-brett/dipy-textbook/main?urlpath=tree/boolean_indexing_nd.Rmd" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch onBinder"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="_static/images/logo_binder.svg">
+  </span>
+<span class="btn__text-container">Binder</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://dipy.nipraxis.org/hub/user-redirect/git-pull?repo=https%3A//github.com/matthew-brett/dipy-textbook&urlpath=tree/dipy-textbook/boolean_indexing_nd.Rmd&branch=main" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch onJupyterHub"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="_static/images/logo_jupyterhub.svg">
+  </span>
+<span class="btn__text-container">JupyterHub</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/matthew-brett/dipy-textbook/blob/main/boolean_indexing_nd.Rmd" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch onColab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://deepnote.com/launch?url=https%3A%2F%2Fgithub.com%2Fmatthew-brett%2Fdipy-textbook%2Fblob%2Fmain%2Fboolean_indexing_nd.Rmd" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch onDeepnote"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="_static/images/logo_deepnote.svg">
+  </span>
+<span class="btn__text-container">Deepnote</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="initThebeSBT()"
+  class="btn btn-sm btn-launch-thebe dropdown-item"
+  title="Launch Thebe"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-play"></i>
+  </span>
+<span class="btn__text-container">Live Code</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/matthew-brett/dipy-textbook" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/matthew-brett/dipy-textbook/issues/new?title=Issue%20on%20page%20%2Fboolean_indexing_nd.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/boolean_indexing_nd.Rmd" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.Rmd</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script>
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Boolean indexing with more than one dimension</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Boolean indexing with more than one dimension</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#boolean-indexing-in-two-dimensions">Boolean indexing in two dimensions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#indexing-a-three-dimensional-array-with-a-1d-boolean">Indexing a three-dimensional array with a 1D Boolean</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#indexing-a-three-dimensional-array-with-a-2d-boolean">Indexing a three-dimensional array with a 2D Boolean</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#indexing-a-three-dimensional-array-with-a-3d-boolean">Indexing a three-dimensional array with a 3D Boolean</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#another-summary-of-the-rule">Another summary of the rule</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-1d-boolean-arrays-on-other-axes">Using 1D Boolean arrays on other axes</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="boolean-indexing-with-more-than-one-dimension">
+<h1>Boolean indexing with more than one dimension<a class="headerlink" href="#boolean-indexing-with-more-than-one-dimension" title="Permalink to this heading">#</a></h1>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># import common modules</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>  <span class="c1"># the Python array package</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>  <span class="c1"># the Python plotting package</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>First we make a 3D array of shape (4, 3, 2), just as we did in <a class="reference internal" href="arrays_3d.html"><span class="doc std std-doc">the 3D array
+page</span></a>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># create an array of numbers from 0 to 11 inclusive, reshape this into a 4 rows by 3 columns array</span>
+<span class="n">plane0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">12</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">plane0</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[ 0,  1,  2],
+       [ 3,  4,  5],
+       [ 6,  7,  8],
+       [ 9, 10, 11]])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># create an array of numbers from 100 to 111 inclusive, reshape this into a 4 rows by 3 columns array</span>
+<span class="n">plane1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">112</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">plane1</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[100, 101, 102],
+       [103, 104, 105],
+       [106, 107, 108],
+       [109, 110, 111]])
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can use <code class="docutils literal notranslate"><span class="pre">np.stack</span></code> to stack the two 2D arrays into a 3D array, by stacking
+over the third axis (<code class="docutils literal notranslate"><span class="pre">axis=2</span></code>):</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Make a 3D array by stacking the two 2D arrays.</span>
+<span class="n">arr_3d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">plane0</span><span class="p">,</span> <span class="n">plane1</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">arr_3d</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[[  0, 100],
+        [  1, 101],
+        [  2, 102]],
+
+       [[  3, 103],
+        [  4, 104],
+        [  5, 105]],
+
+       [[  6, 106],
+        [  7, 107],
+        [  8, 108]],
+
+       [[  9, 109],
+        [ 10, 110],
+        [ 11, 111]]])
+</pre></div>
+</div>
+</div>
+</div>
+<p>Here is the array pictured in 3D space:</p>
+<p><img alt="" src="_images/arr_3d_planes.jpg" /></p>
+<section id="id1">
+<h2>Boolean indexing with more than one dimension<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h2>
+<p>Below you will see that we use Boolean arrays of one or two or three dimensions
+to index into a three-dimensional array.</p>
+<p>This is a little hard to visualize, so we will go through it slowly.  But
+first, we will give you the rule for what you get back from indexing with a
+Boolean array.</p>
+<p>Let’s say you have an array <code class="docutils literal notranslate"><span class="pre">A</span></code>, of N dimensions - in our case N=3.</p>
+<p>Let’s say you are indexing with a Boolean array <code class="docutils literal notranslate"><span class="pre">B</span></code> of P dimensions.  P can be
+1 or 2 or 3.  Indexing <code class="docutils literal notranslate"><span class="pre">A</span></code> with <code class="docutils literal notranslate"><span class="pre">B</span></code> gives a result <code class="docutils literal notranslate"><span class="pre">R</span></code>, as in:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">R</span> <span class="o">=</span> <span class="n">A</span><span class="p">[</span><span class="n">B</span><span class="p">]</span>
+</pre></div>
+</div>
+<p><strong>Rule</strong>: The result <code class="docutils literal notranslate"><span class="pre">R</span></code> of Indexing an N-dimensional array <code class="docutils literal notranslate"><span class="pre">A</span></code> with a
+P-dimensional Boolean array <code class="docutils literal notranslate"><span class="pre">B</span></code> gives you one <em>row</em> for every <code class="docutils literal notranslate"><span class="pre">True</span></code> element in
+<code class="docutils literal notranslate"><span class="pre">B</span></code>, and as many extra dimension as are left in <code class="docutils literal notranslate"><span class="pre">A</span></code> — specifically, <code class="docutils literal notranslate"><span class="pre">N</span> <span class="pre">-</span> <span class="pre">P</span></code>.
+Let’s say there are <code class="docutils literal notranslate"><span class="pre">T</span></code> True elements in <code class="docutils literal notranslate"><span class="pre">B</span></code>.  Then the shape of <code class="docutils literal notranslate"><span class="pre">R</span></code> is <code class="docutils literal notranslate"><span class="pre">(T,)</span> <span class="pre">+</span> <span class="pre">A.shape[(N</span> <span class="pre">-</span> <span class="pre">P):]</span></code></p>
+<p>That is a hard to follow in the abstract, but you will see the rule playing out
+in the examples below.  We will rephrase the rule again a couple of times at
+the end.</p>
+</section>
+<section id="boolean-indexing-in-two-dimensions">
+<h2>Boolean indexing in two dimensions<a class="headerlink" href="#boolean-indexing-in-two-dimensions" title="Permalink to this heading">#</a></h2>
+<p>Let’s see how the rule plays out in two dimensions.  Remember:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plane0</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[ 0,  1,  2],
+       [ 3,  4,  5],
+       [ 6,  7,  8],
+       [ 9, 10, 11]])
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now imagine we index into this 2D array with a one-dimensional array:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">B_1D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">])</span>
+<span class="n">B_1D</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([False,  True, False,  True])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">res_1d</span> <span class="o">=</span> <span class="n">plane0</span><span class="p">[</span><span class="n">B_1D</span><span class="p">]</span>
+<span class="n">res_1d</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[ 3,  4,  5],
+       [ 9, 10, 11]])
+</pre></div>
+</div>
+</div>
+</div>
+<p>Notice that the Boolean array <code class="docutils literal notranslate"><span class="pre">B_1D</span></code> has one element for each <em>row</em> in
+<code class="docutils literal notranslate"><span class="pre">plane0</span></code>, and it has selected only the rows of <code class="docutils literal notranslate"><span class="pre">plane0</span></code> where there is a <code class="docutils literal notranslate"><span class="pre">True</span></code>
+in the Boolean array. There are 2 <code class="docutils literal notranslate"><span class="pre">True</span></code> values in <code class="docutils literal notranslate"><span class="pre">B_1D</span></code> (<code class="docutils literal notranslate"><span class="pre">T</span></code>, above = 2)
+<code class="docutils literal notranslate"><span class="pre">B_1D</span></code> has one dimension, leaving N - P = 2-1 = 1 dimension over, so the output
+array is two dimensions, shape <code class="docutils literal notranslate"><span class="pre">(2,)</span> <span class="pre">+</span> <span class="pre">plane0.shape[1:]</span></code> == <code class="docutils literal notranslate"><span class="pre">(2,</span> <span class="pre">3)</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">res_1d</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(2, 3)
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now lets try a two dimensional Boolean array.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">B_2D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span>
+                 <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span>
+                 <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span>
+                 <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">]])</span>
+<span class="n">B_2D</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[ True, False,  True],
+       [False,  True, False],
+       [ True, False,  True],
+       [ True,  True, False]])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">res_2d</span> <span class="o">=</span> <span class="n">plane0</span><span class="p">[</span><span class="n">B_2D</span><span class="p">]</span>
+<span class="n">res_2d</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([ 0,  2,  4,  6,  8,  9, 10])
+</pre></div>
+</div>
+</div>
+</div>
+<p>Notice that the Boolean array <code class="docutils literal notranslate"><span class="pre">B_2D</span></code> has one element for each <em>element</em> in
+<code class="docutils literal notranslate"><span class="pre">plane0</span></code>, and it has selected <em>elements</em> from <code class="docutils literal notranslate"><span class="pre">plane0</span></code> where there is a <code class="docutils literal notranslate"><span class="pre">True</span></code>
+in the Boolean array. There are 7 <code class="docutils literal notranslate"><span class="pre">True</span></code> values in <code class="docutils literal notranslate"><span class="pre">B_2D</span></code> (<code class="docutils literal notranslate"><span class="pre">T</span></code>, above = 7)
+<code class="docutils literal notranslate"><span class="pre">B_2D</span></code> has two dimensions, leaving N - P = 2-2 = 0 dimension over, so the output
+array is one dimensions, shape <code class="docutils literal notranslate"><span class="pre">(7,)</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">res_2d</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(7,)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="indexing-a-three-dimensional-array-with-a-1d-boolean">
+<h2>Indexing a three-dimensional array with a 1D Boolean<a class="headerlink" href="#indexing-a-three-dimensional-array-with-a-1d-boolean" title="Permalink to this heading">#</a></h2>
+<p>We can index <code class="docutils literal notranslate"><span class="pre">arr_3d</span></code> with a one-dimensional Boolean array. This selects
+elements from the <em>first</em> axis.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bool_1d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">])</span>
+<span class="n">arr_3d</span><span class="p">[</span><span class="n">bool_1d</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[[  3, 103],
+        [  4, 104],
+        [  5, 105]],
+
+       [[  6, 106],
+        [  7, 107],
+        [  8, 108]]])
+</pre></div>
+</div>
+</div>
+</div>
+<p>Pictured in 3D space, the first axis is the rows, across each plane. So, using
+<code class="docutils literal notranslate"><span class="pre">[False,</span> <span class="pre">True,</span> <span class="pre">True,</span> <span class="pre">False]</span></code> to index <code class="docutils literal notranslate"><span class="pre">arr_3d</span></code> is equivalent to stating “give
+me the 2nd and 3rd rows, across both remaining planes, from <code class="docutils literal notranslate"><span class="pre">arr_3d</span></code>”.</p>
+<p>Put another way, the 1D Boolean index is saying, “Give me only the <em>rows</em> with True, and all the columns and all the planes”.</p>
+<p>Remember that the <code class="docutils literal notranslate"><span class="pre">True</span></code> and <code class="docutils literal notranslate"><span class="pre">False</span></code> values in the Boolean array act as
+‘switches’: only the elements corresponding to <code class="docutils literal notranslate"><span class="pre">True</span></code> make it into the final
+array:</p>
+<p><img alt="" src="_images/arr_3d_1d_bool.jpg" /></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Show the final array, from indexing arr_3d with bool_1d</span>
+<span class="n">arr_3d</span><span class="p">[</span><span class="n">bool_1d</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[[  3, 103],
+        [  4, 104],
+        [  5, 105]],
+
+       [[  6, 106],
+        [  7, 107],
+        [  8, 108]]])
+</pre></div>
+</div>
+</div>
+</div>
+<p>Notice that the Boolean array <code class="docutils literal notranslate"><span class="pre">bool_1d</span></code> has one element for each <em>row</em> in
+<code class="docutils literal notranslate"><span class="pre">arr_3d</span></code>, and it has selected only the rows of <code class="docutils literal notranslate"><span class="pre">arr_3d</span></code> where there is a <code class="docutils literal notranslate"><span class="pre">True</span></code>
+in the Boolean array. There are 2 <code class="docutils literal notranslate"><span class="pre">True</span></code> values in <code class="docutils literal notranslate"><span class="pre">bool_1D</span></code>,  <code class="docutils literal notranslate"><span class="pre">T</span> <span class="pre">=</span> <span class="pre">2</span></code>,
+<code class="docutils literal notranslate"><span class="pre">bool_1D</span></code> has one dimension, leaving N - P = 3 - 1 = 2 dimensions over, so the
+output array is three dimensions, shape <code class="docutils literal notranslate"><span class="pre">(2,)</span> <span class="pre">+</span> <span class="pre">arr_3d.shape[1:]</span></code> == <code class="docutils literal notranslate"><span class="pre">(2,</span> <span class="pre">3,</span> <span class="pre">2)</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Show the shape of the final array.</span>
+<span class="n">arr_3d</span><span class="p">[</span><span class="n">bool_1d</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(2, 3, 2)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="indexing-a-three-dimensional-array-with-a-2d-boolean">
+<h2>Indexing a three-dimensional array with a 2D Boolean<a class="headerlink" href="#indexing-a-three-dimensional-array-with-a-2d-boolean" title="Permalink to this heading">#</a></h2>
+<p>We can also index with a two-dimensional Boolean array.</p>
+<p>Put another way, we want “Only the rows, columns with a True value, and all the planes”.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bool_2d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span>
+                    <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span>
+                    <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span>
+                    <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span>
+                   <span class="p">])</span>
+<span class="n">bool_2d</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[False,  True, False],
+       [ True, False,  True],
+       [ True, False, False],
+       [False, False,  True]])
+</pre></div>
+</div>
+</div>
+</div>
+<p>If we index with this array, it selects elements from the first <em>two</em> axes.</p>
+<p>Put another way, we want “Only the rows, columns with a True value, and all the planes”.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># index arr_3d with bool_2d</span>
+<span class="n">arr_3d</span><span class="p">[</span><span class="n">bool_2d</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[  1, 101],
+       [  3, 103],
+       [  5, 105],
+       [  6, 106],
+       [ 11, 111]])
+</pre></div>
+</div>
+</div>
+</div>
+<p>You can think of the <code class="docutils literal notranslate"><span class="pre">bool_2d</span></code> array as ‘switching’ on or off individual columns of the <code class="docutils literal notranslate"><span class="pre">arr_3d</span></code> array. If we show this as a sequence, pictured in 3D space, it looks as follows:</p>
+<p><img alt="" src="_images/arr_3d_2d_bool.jpg" /></p>
+<p>In this case, using <code class="docutils literal notranslate"><span class="pre">bool_2d</span></code> to index <code class="docutils literal notranslate"><span class="pre">arr_3d</span></code> yields an array with one plane, with 5 rows and 2 columns:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">arr_3d</span><span class="p">[</span><span class="n">bool_2d</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[  1, 101],
+       [  3, 103],
+       [  5, 105],
+       [  6, 106],
+       [ 11, 111]])
+</pre></div>
+</div>
+</div>
+</div>
+<p>The Boolean array <code class="docutils literal notranslate"><span class="pre">bool_2d</span></code> has one element for each <em>row, column</em> pair in
+<code class="docutils literal notranslate"><span class="pre">arr_3d</span></code>, and it has selected only the row, column pairs of <code class="docutils literal notranslate"><span class="pre">arr_3d</span></code> where
+there is a <code class="docutils literal notranslate"><span class="pre">True</span></code> in the Boolean array. There are 5 <code class="docutils literal notranslate"><span class="pre">True</span></code> values in <code class="docutils literal notranslate"><span class="pre">bool_2d</span></code>,
+<code class="docutils literal notranslate"><span class="pre">T</span> <span class="pre">=</span> <span class="pre">5</span></code>, <code class="docutils literal notranslate"><span class="pre">bool_2d</span></code> has two dimensions, leaving N - P = 3 - 2 = 1 dimensions left
+over, so the output array is two dimensions, shape <code class="docutils literal notranslate"><span class="pre">(5,)</span> <span class="pre">+</span> <span class="pre">arr_3d.shape[2:]</span></code> ==
+<code class="docutils literal notranslate"><span class="pre">(5,</span> <span class="pre">2)</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># show the shape of the arr_3d array, when indexed with the bool_2d boolean array</span>
+<span class="n">arr_3d</span><span class="p">[</span><span class="n">bool_2d</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(5, 2)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="indexing-a-three-dimensional-array-with-a-3d-boolean">
+<h2>Indexing a three-dimensional array with a 3D Boolean<a class="headerlink" href="#indexing-a-three-dimensional-array-with-a-3d-boolean" title="Permalink to this heading">#</a></h2>
+<p>We can even index with a 3D array, this selects elements over all three
+dimensions.  In which order does it get the elements?</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># A zero (=False) array of all Booleans (dtype=bool)</span>
+<span class="n">bool_3d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+<span class="n">bool_3d</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[[False, False],
+        [False, False],
+        [False, False]],
+
+       [[False, False],
+        [False, False],
+        [False, False]],
+
+       [[False, False],
+        [False, False],
+        [False, False]],
+
+       [[False, False],
+        [False, False],
+        [False, False]]])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Fill in the first plane with the original 2D array</span>
+<span class="n">bool_3d</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">bool_2d</span>
+<span class="c1"># Fill in the second plane with another 2D array.</span>
+<span class="n">another_bool_2d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span>
+                            <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span>
+                            <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span>
+                            <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span>
+                           <span class="p">])</span>
+<span class="n">bool_3d</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">another_bool_2d</span>
+<span class="n">bool_3d</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[[False,  True],
+        [ True,  True],
+        [False, False]],
+
+       [[ True, False],
+        [False, False],
+        [ True, False]],
+
+       [[ True,  True],
+        [False,  True],
+        [False, False]],
+
+       [[False,  True],
+        [False, False],
+        [ True, False]]])
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Use bool_3d to index arr_3d</span>
+<span class="n">arr_3d</span><span class="p">[</span><span class="n">bool_3d</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([100,   1, 101,   3,   5,   6, 106, 107, 109,  11])
+</pre></div>
+</div>
+</div>
+</div>
+<p><img alt="" src="_images/arr_3d_3d_bool.jpg" /></p>
+<p>The Boolean array <code class="docutils literal notranslate"><span class="pre">bool_3d</span></code> has one element for each <em>row, column, plane</em>
+triple in <code class="docutils literal notranslate"><span class="pre">arr_3d</span></code>.  Each triple defines an element.  <code class="docutils literal notranslate"><span class="pre">bool_3d</span></code> has selected
+only the elements of <code class="docutils literal notranslate"><span class="pre">arr_3d</span></code> where there is a <code class="docutils literal notranslate"><span class="pre">True</span></code> in the Boolean array.
+There are 10 <code class="docutils literal notranslate"><span class="pre">True</span></code> values in <code class="docutils literal notranslate"><span class="pre">bool_3d</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">bool_3d</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>10
+</pre></div>
+</div>
+</div>
+</div>
+<p>Therefore <code class="docutils literal notranslate"><span class="pre">T</span> <span class="pre">=</span> <span class="pre">10</span></code>, <code class="docutils literal notranslate"><span class="pre">bool_3d</span></code> has three dimensions
+leaving N - P = 3 - 3 = 0 dimensions left over, so the output array is one
+dimension, shape <code class="docutils literal notranslate"><span class="pre">(10,)</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Show the shape</span>
+<span class="n">arr_3d</span><span class="p">[</span><span class="n">bool_3d</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(10,)
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="another-summary-of-the-rule">
+<h2>Another summary of the rule<a class="headerlink" href="#another-summary-of-the-rule" title="Permalink to this heading">#</a></h2>
+<p>Now we have done the indexing in one, two and three dimensions, let us think
+again about the rule for the shape.</p>
+<p>The Boolean index selects the items on the corresponding dimension(s).
+Therefore:</p>
+<ul class="simple">
+<li><p>A 1D index on its own selects rows (and leaves columns and planes intact).
+The output has one <em>row</em> for each True in the array, and the original number
+of columns and planes.  It is therefore 3D.</p></li>
+<li><p>A 2D index on its own selects row, column elements (and leaves planes
+intact).  The output has one <em>row</em> for each True in the 2D array (each
+selected row, column pair), and the original number of planes.  It is
+therefore 2D.</p></li>
+<li><p>A 3D index selects row, column, plane elements.  The output has one <em>row</em> for
+each True in the 3D array (each selected row, column, plane element).  It is
+therefore 1D.</p></li>
+</ul>
+<p>What’s the rule again?</p>
+<p>The dimensions in the indexing Boolean array get collapsed to a single
+dimension.  Call that the Boolean dimension.  The dimension has the same number
+of elements are there are True values in the Boolean array.  The remaining
+dimensions persist. In our case:</p>
+<ul class="simple">
+<li><p>1D Boolean collapses the single dimension to a single dimension - giving
+Boolean dimension x columns x planes.</p></li>
+<li><p>2D Boolean collapses two dimensions to a single dimension - giving Boolean
+dimension x planes.</p></li>
+<li><p>3D Boolean collapses all three dimensions to a single dimension - giving
+Boolean dimension.</p></li>
+</ul>
+<p>In each of the cases above, the Boolean dimension has the same length as the
+number of True elements in the indexing Boolean array.</p>
+</section>
+<section id="using-1d-boolean-arrays-on-other-axes">
+<h2>Using 1D Boolean arrays on other axes<a class="headerlink" href="#using-1d-boolean-arrays-on-other-axes" title="Permalink to this heading">#</a></h2>
+<p>We can also mix 1D Boolean arrays with ordinary slicing to select elements on
+a single axis. E.g. the code below returns the entire second plane of <code class="docutils literal notranslate"><span class="pre">arr_3d</span></code>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bool_1d_dim3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">])</span>
+<span class="n">arr_3d</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">bool_1d_dim3</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>array([[[100],
+        [101],
+        [102]],
+
+       [[103],
+        [104],
+        [105]],
+
+       [[106],
+        [107],
+        [108]],
+
+       [[109],
+        [110],
+        [111]]])
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "matthew-brett/dipy-textbook",
+            ref: "main",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+                <footer class="bd-footer-article">
+                  
+<div class="footer-article-items footer-article__inner">
+  
+    <div class="footer-article-item"><!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="boolean_indexing.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Indexing with Boolean arrays</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="intro_to_4d.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Working with four dimensional images, masks and functions</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div></div>
+  
+</div>
+
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Boolean indexing with more than one dimension</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#boolean-indexing-in-two-dimensions">Boolean indexing in two dimensions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#indexing-a-three-dimensional-array-with-a-1d-boolean">Indexing a three-dimensional array with a 1D Boolean</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#indexing-a-three-dimensional-array-with-a-2d-boolean">Indexing a three-dimensional array with a 2D Boolean</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#indexing-a-three-dimensional-array-with-a-3d-boolean">Indexing a three-dimensional array with a 3D Boolean</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#another-summary-of-the-rule">Another summary of the rule</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-1d-boolean-arrays-on-other-axes">Using 1D Boolean arrays on other axes</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By The nipraxis team
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

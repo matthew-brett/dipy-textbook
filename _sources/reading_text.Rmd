@@ -1,0 +1,87 @@
+---
+jupyter:
+  jupytext:
+    notebook_metadata_filter: all,-language_info
+    split_at_heading: true
+    text_representation:
+      extension: .Rmd
+      format_name: rmarkdown
+      format_version: '1.2'
+      jupytext_version: 1.11.5
+  kernelspec:
+    display_name: Python 3
+    language: python
+    name: python3
+  orphan: true
+  prereqs:
+  - pathlib
+---
+
+# Reading data from text files
+
+We have been reading various values from text files using the [pathlib
+Path](pathlib.Rmd) `read_text` method, and then processing the lines in the
+file.
+
+Here is some revision on how to do that, going from the crude to the elegant
+way.
+
+First we write a little text file out to disk:
+
+```{python}
+from pathlib import Path
+
+numbers = [1.2, 2.3, 3.4, 4.5]
+strings = []
+for number in numbers:
+    # String version of number.
+    strings.append(str(number))
+
+# Stick the strings together separated by new lines ('\n'):
+out_text = '\n'.join(strings)
+out_text
+```
+
+```{python}
+# Write text to file.
+path = Path('some_numbers.txt')
+path.write_text(out_text)
+```
+
+Now we read it back again. First, we will read the all the lines as one long string, then split it into lines at newline characters:
+
+```{python}
+text_back = path.read_text()
+lines = text_back.splitlines()
+len(lines)
+```
+
+```{python}
+lines[0]
+```
+
+Next we will convert each number to a float:
+
+```{python}
+numbers_again = []
+for line in lines:
+    numbers_again.append(float(line))
+numbers_again
+```
+
+In fact we read these data even more concisely, and quickly, by using
+`np.loadtxt`.
+
+```{python}
+import numpy as np
+```
+
+```{python}
+np.loadtxt('some_numbers.txt')
+```
+
+Finally, for neatness, we delete the temporary file:
+
+```{python}
+path.unlink()
+```
