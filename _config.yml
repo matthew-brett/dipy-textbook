@@ -113,7 +113,7 @@ launch_buttons:
   # The interface interactive links will activate ["classic", "jupyterlab"]
   notebook_interface: "classic"
   # The URL of the JupyterHub (e.g., https://datahub.berkeley.edu)
-  jupyterhub_url: "https://dipy.nipraxis.org"
+  # jupyterhub_url: "https://dipy.nipraxis.org"
   # The URL of the BinderHub (e.g., https://mybinder.org)
   binderhub_url: "https://mybinder.org"
   # The URL of Google Colab (e.g., https://colab.research.google.com)
